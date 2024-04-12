@@ -36,7 +36,8 @@ static void ISR_right()
     bool A = digitalRead(PIN_ENCODER_RIGHT_A);
     bool B = digitalRead(PIN_ENCODER_RIGHT_B);
     static bool oldA = false;
-    pulse_right += pulse_diff(A, B, oldA);
+    // pravy kanal pocita opacne --> -1*pulse_diff
+    pulse_right += -pulse_diff(A, B, oldA);
     oldA = A;
 }
 

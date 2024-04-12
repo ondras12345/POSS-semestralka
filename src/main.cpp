@@ -4,10 +4,14 @@
 #include "hardware.h"
 #include "encoder.h"
 #include "motor.h"
+#include "cli.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
  * Prvni kriz neni potreba mapovat.
+ *
+ * TODO bluetooth nefunguje
+ * rfcomm connect /dev/rfcomm0 00:1B:10:62:D0:FC
  */
 
 
@@ -90,13 +94,19 @@ void setup() {
 
     // inicializace sériového kanálu
     Serial.begin(9600);
+    cli_init();
 
+    Serial.println("waiting for left bumper");
     while (digitalRead(PIN_BUMPER_LEFT)) {
         // nepokracuj dokud neni stiknut levy naraznik
     }
 }
 
-void loop() {
+void loop()
+{
+    cli_loop();
+
+
     // sejmutí dat z detektoru cary
     RGBLineFollower.loop();
 
