@@ -17,6 +17,10 @@
 #define PIN_MOTOR_RIGHT_IN1 49
 #define PIN_MOTOR_RIGHT_IN2 48
 
+// pri techto stridach se zacnou roztacet s pasem ve vzduchu
+#define MOTOR_LEFT_OFFSET 40
+#define MOTOR_RIGHT_OFFSET 55
+
 #define PIN_BUZZER 45
 
 #define PIN_BUMPER_LEFT 62

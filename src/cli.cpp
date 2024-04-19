@@ -6,6 +6,7 @@
 #include <Commander-API-Commands.hpp>
 #include <Commander-IO.hpp>
 #include "encoder.h"
+#include "motor.h"
 #include "line_follower.h"
 
 static Shellminator shell(&Serial);
@@ -30,9 +31,62 @@ static void cmnd_line(char *args, Stream *response)
     response->println(line_follower_state(), BIN);
 }
 
+
+static void cmnd_motor_move(char *args, Stream *response)
+{
+    int speed_left, speed_right;
+    char c; // there should be no extra char
+    if (sscanf(args, " %i %i%c", &speed_left, &speed_right, &c) != 2)
+    {
+        response->print(F("bad count: "));
+        response->println(args);
+        goto usage;
+    }
+    if (abs(speed_left) > 255 || abs(speed_right) > 255)
+    {
+        Serial.println(F("out of range"));
+        goto usage;
+    }
+    Serial.println(F("moving"));
+    motor_move(speed_left, speed_right);
+    return;
+
+
+usage:
+    response->println(F("usage: motor_move speed_left speed_right"));
+}
+
+
+static void cmnd_motor_move_lin(char *args, Stream *response)
+{
+    int speed_left, speed_right;
+    char c; // there should be no extra char
+    if (sscanf(args, " %i %i%c", &speed_left, &speed_right, &c) != 2)
+    {
+        response->print(F("bad count: "));
+        response->println(args);
+        goto usage;
+    }
+    if (abs(speed_left) > 255 || abs(speed_right) > 255)
+    {
+        Serial.println(F("out of range"));
+        goto usage;
+    }
+    Serial.println(F("moving"));
+    motor_move_lin(speed_left, speed_right);
+    return;
+
+
+usage:
+    response->println(F("usage: motor_move_lin speed_left speed_right"));
+}
+
+
 static Commander::API_t API_tree[] = {
-    apiElement("encoder",       "Read rotary encoders",     cmnd_encoder),
-    apiElement("line",          "Read line follower",       cmnd_line),
+    apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
+    apiElement("line",          "Read line follower",           cmnd_line),
+    apiElement("motor_move",    "Set motor output (nonlinear)", cmnd_motor_move),
+    apiElement("motor_move_lin","Set motor output (linearized)",cmnd_motor_move_lin),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };

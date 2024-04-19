@@ -11,7 +11,7 @@
  * Prvni kriz neni potreba mapovat.
  *
  * TODO bluetooth nefunguje
- * rfcomm connect /dev/rfcomm0 00:1B:10:62:D0:FC
+ * sudo rfcomm bind 0 <btaddr>
  */
 
 
@@ -86,7 +86,7 @@ void setup() {
     // inicializace sledovani cary
     line_follower_init();
     // inicializace sériového kanálu
-    Serial.begin(9600);
+    Serial.begin(115200);
     cli_init();
 
     Serial.println("waiting for left bumper");
