@@ -57,6 +57,9 @@ MeBuzzer buzzer;
 // Gyro
 //MeGyro gyro(1,0x69);
 
+bool emergency = true;
+bool get_emergency() { return emergency; }
+
 
 void setup() {
     // nastav piny narazniku
@@ -89,11 +92,6 @@ void setup() {
     // inicializace sériového kanálu
     Serial.begin(115200);
     cli_init();
-
-    Serial.println("waiting for left bumper");
-    while (digitalRead(PIN_BUMPER_LEFT)) {
-        // nepokracuj dokud neni stiknut levy naraznik
-    }
 }
 
 void loop()
@@ -101,9 +99,28 @@ void loop()
     cli_loop();
     line_follower_loop();
 
+    unsigned long now = millis();
+    static unsigned long prev_millis = 0;
+
     switch (robot_state)
     {
-        case s_boot:
+        case s_emergency:
+            if (now - prev_millis >= 500)
+            {
+                // TODO test emergency mode
+                Serial.println(F("emergency, waiting for left bumper"));
+                prev_millis = now;
+            }
+            if (digitalRead(PIN_BUMPER_LEFT)) emergency = false;
+            if (!get_emergency()) robot_state = s_idle;
+            break;
+
+        case s_idle:
+            break;
+
+        case s_stop:
+            motor_move_lin(0, 0);
+            robot_state = s_idle;
             break;
 
         case s_line_follow:
@@ -112,10 +129,10 @@ void loop()
             break;
 
         case s_line_following:
-            if (line_follower_crossroad() != cr_I)
+            crossroad_t cr = line_follower_crossroad();  // TODO tato funkce neumi vsechny krizovatky
+            if (cr != cr_I && cr != cr_7 && cr != cr_G)
             {
-                motor_move_lin(0, 0);
-                robot_state = s_boot;
+                robot_state = s_stop;
             }
             else
             {

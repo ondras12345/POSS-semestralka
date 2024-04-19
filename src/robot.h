@@ -2,10 +2,11 @@
 
 // state numbers must start from 0 and be consecutive
 #define ROBOT_STATES(X) \
-    /** Default state. */ \
-    X(s_boot, 0) \
-    X(s_line_follow, 1) \
-    X(s_line_following, 2)
+    X(s_emergency, 0) \
+    X(s_idle, 1) \
+    X(s_line_follow, 2) \
+    X(s_line_following, 3) \
+    X(s_stop, 4)
 
 #define X_ENUM(name, value) name = value,
 typedef enum {

@@ -30,4 +30,4 @@ bool robot_set_state(const char * str)
 }
 
 
-robot_state_t robot_state = s_boot;
+robot_state_t robot_state = s_emergency;

@@ -30,6 +30,12 @@ void motor_init()
  */
 void motor_move(int16_t speed_left, int16_t speed_right)
 {
+    if (get_emergency())
+    {
+        speed_left = 0;
+        speed_right = 0;
+    }
+
     bool reverse_left = (speed_left < 0);
     digitalWrite(PIN_MOTOR_LEFT_IN1, !reverse_left);
     digitalWrite(PIN_MOTOR_LEFT_IN2, reverse_left);
