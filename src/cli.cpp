@@ -34,6 +34,8 @@ static void cmnd_line(char *args, Stream *response)
     response->println(line_follower_state_debounced(), BIN);
     response->print(F("  crossroad: "));
     response->println((char)line_follower_crossroad());
+    response->print(F("  last_crossroad: "));
+    response->println((char)line_follower_last_crossroad());
 }
 
 
