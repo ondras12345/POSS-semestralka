@@ -8,6 +8,7 @@
 #include "encoder.h"
 #include "motor.h"
 #include "line_follower.h"
+#include "robot.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -29,6 +30,10 @@ static void cmnd_line(char *args, Stream *response)
     response->println(line_follower_offset());
     response->print(F("  state: "));
     response->println(line_follower_state(), BIN);
+    response->print(F("  state_debounced: "));
+    response->println(line_follower_state_debounced(), BIN);
+    response->print(F("  crossroad: "));
+    response->println((char)line_follower_crossroad());
 }
 
 
@@ -82,11 +87,27 @@ usage:
 }
 
 
+static void cmnd_state(char *args, Stream *response)
+{
+    unsigned state;
+    char c; // there should be no extra char
+    if (sscanf(args, " %u%c", &state, &c) == 1)
+    {
+        if (state < s_MAX) robot_state = (robot_state_t)state;
+    }
+    response->print(F("state: "));
+    response->println(robot_state);
+
+    response->println(F("usage: state [nr]"));
+}
+
+
 static Commander::API_t API_tree[] = {
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
     apiElement("motor_move",    "Set motor output (nonlinear)", cmnd_motor_move),
     apiElement("motor_move_lin","Set motor output (linearized)",cmnd_motor_move_lin),
+    apiElement("state",         "Get/set state machine state",  cmnd_state),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };

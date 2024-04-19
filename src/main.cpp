@@ -5,6 +5,7 @@
 #include "motor.h"
 #include "cli.h"
 #include "line_follower.h"
+#include "robot.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -54,7 +55,7 @@ MeRGBLed ledRing(0, numberOfLEDs );
 MeBuzzer buzzer;
 
 // Gyro
-MeGyro gyro(1,0x69);
+//MeGyro gyro(1,0x69);
 
 
 void setup() {
@@ -99,4 +100,22 @@ void loop()
 {
     cli_loop();
     line_follower_loop();
+
+    switch (robot_state)
+    {
+        case s_boot:
+            break;
+
+        case s_line_follow:
+            if (line_follower_crossroad() != cr_I)
+            {
+                motor_move_lin(0, 0);
+                robot_state = s_boot;
+            }
+            else
+            {
+                // TODO
+            }
+            break;
+    }
 }
