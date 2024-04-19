@@ -1,6 +1,7 @@
 #include "line_follower.h"
 #include <Arduino.h>
 #include <MeRGBLineFollower.h>
+#include "hardware.h"
 
 static MeRGBLineFollower RGBLineFollower(PORT_9);
 
@@ -21,37 +22,34 @@ void line_follower_loop()
 
     unsigned long now = millis();
     if (now - prev_millis < 10UL) return;
-
     prev_millis = now;
     // sam to stejne dela jen kazdych 9 ms
     RGBLineFollower.loop();
 
-    uint8_t counters[4] = {0};
-    constexpr uint8_t counter_max = 10;
+    constexpr uint8_t N=4;
+    static uint8_t counters[N] = {0};
     uint8_t state = line_follower_state();
-    for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t i = 0; i < N; i++)
     {
         if (state & (1<<i))
         {
-            if (counters[i] < counter_max) counters[i]++;
+            if (counters[i] < LINE_FOLLOWER_DEBOUNCE) counters[i]++;
         }
         else
         {
             if (counters[i] > 0) counters[i]--;
         }
 
-        if (counters[i] >= counter_max)
+        if (counters[i] >= LINE_FOLLOWER_DEBOUNCE)
         {
             state_debounced |= (1<<i);
-            counters[i] = counter_max; // tohle by nemelo byt potreba
+            counters[i] = LINE_FOLLOWER_DEBOUNCE; // tohle by nemelo byt potreba
         }
         else if (counters[i] == 0)
         {
             state_debounced &= ~(1<<i);
         }
-        // TODO state_debounced se zasekava v nule
     }
-    Serial.println(counters[0]); // TODO jen 0 nebo 1
 
     // detekce krizovatek
     // 0 je cara
