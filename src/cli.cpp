@@ -89,16 +89,27 @@ usage:
 
 static void cmnd_state(char *args, Stream *response)
 {
-    unsigned state;
-    char c; // there should be no extra char
-    if (sscanf(args, " %u%c", &state, &c) == 1)
+    if (*args == ' ') args++;
+    if (!robot_set_state(args))
     {
-        if (state < s_MAX) robot_state = (robot_state_t)state;
+        response->print(F("invalid state: "));
+        response->println(args);
+        response->print(F("available: "));
+        for (size_t i = 0; robot_states[i] != nullptr; i++)
+        {
+            response->print(robot_states[i]);
+            response->print(' ');
+        }
+        response->println();
+        goto usage;
     }
-    response->print(F("state: "));
-    response->println(robot_state);
 
-    response->println(F("usage: state [nr]"));
+    response->print(F("state: "));
+    response->println(robot_states[robot_state]);
+    return;
+
+usage:
+    response->println(F("usage: state [s_name]"));
 }
 
 

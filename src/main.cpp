@@ -107,6 +107,11 @@ void loop()
             break;
 
         case s_line_follow:
+            // TODO start motors & controller
+            robot_state = s_line_following;
+            break;
+
+        case s_line_following:
             if (line_follower_crossroad() != cr_I)
             {
                 motor_move_lin(0, 0);
@@ -114,7 +119,7 @@ void loop()
             }
             else
             {
-                // TODO
+                // TODO controller loop?
             }
             break;
     }
