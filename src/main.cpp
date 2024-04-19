@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <MeAuriga.h>
-#include <MeRGBLineFollower.h>
 #include "hardware.h"
 #include "encoder.h"
 #include "motor.h"
 #include "cli.h"
+#include "line_follower.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -22,11 +22,6 @@ int maxRychlost = 255;
 // Ultrazvukovy snimac
 // pouziti: vzdalenost = sonar.distanceCm()
 MeUltrasonicSensor sonar(PORT_10);
-
-// Snimac cary
-// pouziti: linState = RGBLineFollower.getPositionState();
-//          lineOffset = RGBLineFollower.getPositionOffset();
-MeRGBLineFollower RGBLineFollower(PORT_9);
 
 // Servo
 const byte servoPin = 68;
@@ -89,9 +84,7 @@ void setup() {
     //gyro.begin();
 
     // inicializace sledovani cary
-    RGBLineFollower.begin();
-    RGBLineFollower.setKp(1);
-
+    line_follower_init();
     // inicializace sériového kanálu
     Serial.begin(9600);
     cli_init();
@@ -105,10 +98,5 @@ void setup() {
 void loop()
 {
     cli_loop();
-
-
-    // sejmutí dat z detektoru cary
-    RGBLineFollower.loop();
-
-    delay(10);
+    line_follower_loop();
 }

@@ -6,6 +6,7 @@
 #include <Commander-API-Commands.hpp>
 #include <Commander-IO.hpp>
 #include "encoder.h"
+#include "line_follower.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -22,8 +23,11 @@ static void cmnd_encoder(char *args, Stream *response)
 
 static void cmnd_line(char *args, Stream *response)
 {
-    response->print(F("line: "));
-    // TODO
+    response->println(F("line:"));
+    response->print(F("  offset: "));
+    response->println(line_follower_offset());
+    response->print(F("  state: "));
+    response->println(line_follower_state(), BIN);
 }
 
 static Commander::API_t API_tree[] = {
