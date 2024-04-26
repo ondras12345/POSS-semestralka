@@ -127,7 +127,6 @@ void loop()
         case s_emergency:
             if (now - prev_millis >= 500)
             {
-                // TODO test emergency mode
                 Serial.println(F("emergency, waiting for left bumper"));
                 prev_millis = now;
             }
