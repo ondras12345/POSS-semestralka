@@ -10,6 +10,7 @@
 #include "motor.h"
 #include "line_follower.h"
 #include "robot.h"
+#include "conf.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -129,6 +130,69 @@ static void cmnd_perf(char *args, Stream *response)
 }
 
 
+static void cmnd_conf(char *args, Stream *response)
+{
+    response->println("Usage: conf [name value]");
+
+    char * setting_name = strsep(&args, " ");
+    char * setting_value = args;
+    if (setting_name == nullptr)
+    {
+        // this is ok, just print out config
+    }
+    //else if (strcmp(setting_name, "-s") == 0)
+    //{
+    //    settings_write(s);
+    //}
+    else if (setting_value == nullptr)
+    {
+        response->println("Missing value");
+    }
+
+#define uint8_conf(name) \
+    else if (strcmp(setting_name, #name) == 0) \
+    { \
+        unsigned int tmp; \
+        sscanf(setting_value, "%u", &tmp); \
+        if (tmp > 255) \
+        { \
+            response->println("Value not in range 0-255"); \
+            goto bad; \
+        } \
+        conf.name = (uint8_t)tmp; \
+    }
+
+#define Bool_conf(name) \
+    else if (strcmp(setting_name, #name) == 0) \
+    { \
+        conf.name = (setting_value[0] == '1'); \
+    }
+
+#define float_conf(name) \
+    else if (strcmp(setting_name, #name) == 0) \
+    { \
+        conf.name = atof(setting_value); \
+    }
+
+
+    uint8_conf(test_uint)
+    Bool_conf(test_bool)
+    float_conf(test_float)
+    // TODO test_float
+
+    else
+    {
+        response->print("Invalid config option: ");
+        response->println(setting_name);
+    }
+
+bad:
+    response->println();
+    response->println("configuration:");
+    conf_print(response, conf);
+}
+
+
 static Commander::API_t API_tree[] = {
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
@@ -136,6 +200,7 @@ static Commander::API_t API_tree[] = {
     apiElement("motor_move_lin","Set motor output (linearized)",cmnd_motor_move_lin),
     apiElement("state",         "Get/set state machine state",  cmnd_state),
     apiElement("perf",          "Print perf counters",          cmnd_perf),
+    apiElement("conf",          "Get/set config",               cmnd_conf),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };

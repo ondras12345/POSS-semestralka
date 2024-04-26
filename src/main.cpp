@@ -7,6 +7,7 @@
 #include "cli.h"
 #include "line_follower.h"
 #include "robot.h"
+#include "conf.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -77,6 +78,8 @@ void setup() {
     // nastav piny narazniku
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
+
+    conf_init();
 
     encoder_init();
     motor_init();
