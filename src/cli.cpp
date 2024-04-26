@@ -94,7 +94,11 @@ usage:
 static void cmnd_state(char *args, Stream *response)
 {
     if (*args == ' ') args++;
-    if (!robot_set_state(args))
+    if (!*args)
+    {
+        // no arg, just print state
+    }
+    else if (!robot_set_state(args))
     {
         response->print(F("invalid state: "));
         response->println(args);
