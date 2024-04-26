@@ -2,14 +2,11 @@
 
 conf_t conf;
 
-conf_t conf_default = {
-    0 // all zeros, TODO
-};
-
-
 void conf_init()
 {
-    conf = conf_default;  // TODO
+    memset(&conf, 0, sizeof(conf_t));
+    conf.base_speed = 50;
+    conf.Ki = 0.5;
 }
 
 
