@@ -1,14 +1,15 @@
 #include "pid.h"
+#include <string.h>
 
 
-void pid_init(pid_t *pid, float umax, float Ts)
+void pid_init(pid_t *pid, float Ts)
 {
     memset(pid, 0, sizeof(pid_t));
     pid->b = 1.0;
     pid->b_old = 1.0;
     pid->c = 1.0;
     pid->c_old = 1.0;
-    pid->umax = umax;
+    pid->umax = 1.0;
     pid->Ts = Ts;
     // TODO?
 }

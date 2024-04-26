@@ -5,7 +5,8 @@
 #define CONF_ITEMS(X) \
     X(uint8_t, base_speed, 50) \
     X(float, Kp, 0.5) \
-    X(float, Ki, 0.0)
+    X(float, Ki, 0.0) \
+    X(uint8_t, umax, 50)
 
 #define X_STRUCT(type, name, default) type name;
 typedef struct {

@@ -74,7 +74,6 @@ bool get_emergency() { return emergency; }
 
 // TODO
 #define PID_LINE_TS 20UL
-#define PID_LINE_UMAX 50
 pid_t pid_line;
 
 
@@ -83,7 +82,7 @@ void setup() {
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
 
-    pid_init(&pid_line, PID_LINE_UMAX, PID_LINE_TS);
+    pid_init(&pid_line, PID_LINE_TS*1e-3);
     conf_init();
 
     encoder_init();
@@ -152,6 +151,7 @@ void loop()
             pid_line.Ki = conf.Ki;
             pid_line.Tt = 1e3;
             pid_line.Tf = 1e3;
+            pid_line.umax = conf.umax;
             pid_new_params(&pid_line);
             break;
 

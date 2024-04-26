@@ -33,7 +33,7 @@ typedef struct {
 } pid_t;
 
 
-void pid_init(pid_t *, float umax, float Ts);
+void pid_init(pid_t *, float Ts);
 void pid_new_params(pid_t *);
 float pid_loop(pid_t *, float y, float w);
 
