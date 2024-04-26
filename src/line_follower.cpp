@@ -53,7 +53,12 @@ void line_follower_loop()
         }
     }
 
-    crossroad_t prev_crossroad = crossroad;
+    static crossroad_t prev_crossroad = cr_0;
+    // never change from complex prev_crossroad to simple
+    if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
+    {
+        prev_crossroad = crossroad;
+    }
     // detekce krizovatek
     // 0 je cara
     switch (state_debounced)
