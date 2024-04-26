@@ -9,6 +9,7 @@
 #include "line_follower.h"
 #include "robot.h"
 #include "conf.h"
+#include "imu.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -20,7 +21,7 @@
 
 // Ultrazvukovy snimac
 // pouziti: vzdalenost = sonar.distanceCm()
-MeUltrasonicSensor sonar(PORT_10);
+//MeUltrasonicSensor sonar(PORT_10);
 
 // Servo
 const byte servoPin = 68;
@@ -52,19 +53,18 @@ MeRGBLed ledRing(0, numberOfLEDs );
 // bzučák
 MeBuzzer buzzer;
 
-// Gyro
-//MeGyro gyro(1,0x69);
-
 perf_counter_t pc_cli =             { "cli",           0, 0};
 perf_counter_t pc_line_follower =   { "line_follower", 0, 0};
 perf_counter_t pc_state_machine =   { "state_machine", 0, 0};
-perf_counter_t pc_pid_line =   { "pid_line",      0, 0};
+perf_counter_t pc_pid_line =        { "pid_line",      0, 0};
+perf_counter_t pc_imu =             { "IMU",           0, 0};
 
 perf_counter_t * perf_counters[] = {
     &pc_cli,
     &pc_line_follower,
     &pc_state_machine,
     &pc_pid_line,
+    &pc_imu,
     NULL
 };
 
@@ -104,11 +104,10 @@ void setup() {
     buzzer.setpin(PIN_BUZZER);
     buzzer.noTone();
 
-    // inicializace gyra
-    //gyro.begin();
-
     // inicializace sledovani cary
     line_follower_init();
+    imu_init();
+
     // inicializace sériového kanálu
     Serial.begin(115200);
     cli_init();
@@ -118,6 +117,7 @@ void loop()
 {
     perf_counter_measure(&pc_cli, cli_loop());
     perf_counter_measure(&pc_line_follower, line_follower_loop());
+    perf_counter_measure(&pc_imu, imu_loop());
 
     unsigned long now = millis();
     static unsigned long prev_millis = 0;

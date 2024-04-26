@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "motor.h"
 #include "line_follower.h"
+#include "imu.h"
 #include "robot.h"
 #include "conf.h"
 #include "hardware.h"
@@ -199,6 +200,18 @@ bad:
 }
 
 
+static void cmnd_imu(char *args, Stream *response)
+{
+    response->println(F("imu:"));
+    response->print(F("  angle_X: "));
+    response->println(imu_angle_X());
+    response->print(F("  angle_Y: "));
+    response->println(imu_angle_Y());
+    response->print(F("  angle_Z: "));
+    response->println(imu_angle_Z());
+}
+
+
 static Commander::API_t API_tree[] = {
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
@@ -207,6 +220,7 @@ static Commander::API_t API_tree[] = {
     apiElement("state",         "Get/set state machine state",  cmnd_state),
     apiElement("perf",          "Print perf counters",          cmnd_perf),
     apiElement("conf",          "Get/set config",               cmnd_conf),
+    apiElement("imu",           "Get IMU state",                cmnd_imu),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };
