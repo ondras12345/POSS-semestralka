@@ -72,6 +72,7 @@ void line_follower_loop()
 
         case 0b0000:
             crossroad = cr_T;
+            break;
 
         case 0b1001:
             crossroad = cr_I;
