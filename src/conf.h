@@ -3,9 +3,8 @@
 #include <Arduino.h>
 
 typedef struct {
-    uint8_t test_uint;
-    bool test_bool;
-    float test_float;
+    uint8_t base_speed;
+    float Kp, Ki; //, Kd, Tt, Tf;
 } conf_t;
 
 extern conf_t conf;

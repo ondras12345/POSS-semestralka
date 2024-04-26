@@ -19,12 +19,12 @@ void conf_init()
  */
 void conf_print(Print *response, conf_t c)
 {
-    response->print("conf test_uint ");
-    response->println(c.test_uint);
+    response->print("conf base_speed ");
+    response->println(c.base_speed);
 
-    response->print("conf test_bool ");
-    response->println(c.test_bool ? '1' : '0');
+    response->print("conf Kp ");
+    response->println(c.Kp);
 
-    response->print("conf test_float ");
-    response->println(c.test_float);  // TODO better float print
+    response->print("conf Ki ");
+    response->println(c.Ki);
 }

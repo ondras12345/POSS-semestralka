@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <MeAuriga.h>
 #include <perf_counter.h>
+#include <pid.h>
 #include "hardware.h"
 #include "encoder.h"
 #include "motor.h"
@@ -16,11 +17,6 @@
  * TODO bluetooth nefunguje
  * sudo rfcomm bind 0 <btaddr>
  */
-
-
-int rychlostJizdy = 200;
-int minRychlost = 100;
-int maxRychlost = 255;
 
 // Ultrazvukovy snimac
 // pouziti: vzdalenost = sonar.distanceCm()
@@ -62,11 +58,13 @@ MeBuzzer buzzer;
 perf_counter_t pc_cli =             { "cli",           0, 0};
 perf_counter_t pc_line_follower =   { "line_follower", 0, 0};
 perf_counter_t pc_state_machine =   { "state_machine", 0, 0};
+perf_counter_t pc_pid_line =   { "pid_line",      0, 0};
 
 perf_counter_t * perf_counters[] = {
     &pc_cli,
     &pc_line_follower,
     &pc_state_machine,
+    &pc_pid_line,
     NULL
 };
 
@@ -74,11 +72,18 @@ bool emergency = true;
 bool get_emergency() { return emergency; }
 
 
+// TODO
+#define PID_LINE_TS 20UL
+#define PID_LINE_UMAX 50
+pid_t pid_line;
+
+
 void setup() {
     // nastav piny narazniku
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
 
+    pid_init(&pid_line, PID_LINE_UMAX, PID_LINE_TS);
     conf_init();
 
     encoder_init();
@@ -127,7 +132,7 @@ void loop()
                 Serial.println(F("emergency, waiting for left bumper"));
                 prev_millis = now;
             }
-            if (digitalRead(PIN_BUMPER_LEFT)) emergency = false;
+            if (digitalRead(PIN_BUMPER_LEFT) == LOW) emergency = false;
             if (!get_emergency()) robot_state = s_idle;
             break;
 
@@ -142,6 +147,12 @@ void loop()
         case s_line_follow:
             // TODO start motors & controller
             robot_state = s_line_following;
+            prev_millis = now-PID_LINE_TS-1;
+            pid_line.Kp = conf.Kp;
+            pid_line.Ki = conf.Ki;
+            pid_line.Tt = 1e3;
+            pid_line.Tf = 1e3;
+            pid_new_params(&pid_line);
             break;
 
         case s_line_following:
@@ -152,7 +163,14 @@ void loop()
             }
             else
             {
-                // TODO controller loop?
+                if (now - prev_millis >= PID_LINE_TS)
+                {
+                    perf_counter_start(&pc_pid_line);
+                    int8_t u = (int8_t)pid_loop(&pid_line, line_follower_offset(), 0);
+                    perf_counter_stop(&pc_pid_line);
+                    motor_move_lin(conf.base_speed-u, conf.base_speed+u);
+                    prev_millis = now;
+                }
             }
             break;
     }

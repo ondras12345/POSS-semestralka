@@ -11,6 +11,7 @@
 #include "line_follower.h"
 #include "robot.h"
 #include "conf.h"
+#include "hardware.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -114,6 +115,8 @@ static void cmnd_state(char *args, Stream *response)
 
     response->print(F("state: "));
     response->println(robot_states[robot_state]);
+    response->print(F("emergency: "));
+    response->println(get_emergency());
     return;
 
 usage:
@@ -179,10 +182,9 @@ static void cmnd_conf(char *args, Stream *response)
     }
 
 
-    uint8_conf(test_uint)
-    Bool_conf(test_bool)
-    float_conf(test_float)
-    // TODO test_float
+    uint8_conf(base_speed)
+    float_conf(Kp)
+    float_conf(Ki)
 
     else
     {
