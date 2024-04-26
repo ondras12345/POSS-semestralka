@@ -157,7 +157,7 @@ static void cmnd_conf(char *args, Stream *response)
         response->println("Missing value");
     }
 
-#define uint8_conf(name) \
+#define scanconf_uint8_t(name) \
     else if (strcmp(setting_name, #name) == 0) \
     { \
         unsigned int tmp; \
@@ -170,22 +170,21 @@ static void cmnd_conf(char *args, Stream *response)
         conf.name = (uint8_t)tmp; \
     }
 
-#define Bool_conf(name) \
+#define scanconf_bool(name) \
     else if (strcmp(setting_name, #name) == 0) \
     { \
         conf.name = (setting_value[0] == '1'); \
     }
 
-#define float_conf(name) \
+#define scanconf_float(name) \
     else if (strcmp(setting_name, #name) == 0) \
     { \
         conf.name = atof(setting_value); \
     }
 
+#define X_scanconf(type, name, default) scanconf_##type(name)
 
-    uint8_conf(base_speed)
-    float_conf(Kp)
-    float_conf(Ki)
+    CONF_ITEMS(X_scanconf)
 
     else
     {
