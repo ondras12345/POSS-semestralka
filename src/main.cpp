@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <MeAuriga.h>
+#include <perf_counter.h>
 #include "hardware.h"
 #include "encoder.h"
 #include "motor.h"
@@ -57,6 +58,17 @@ MeBuzzer buzzer;
 // Gyro
 //MeGyro gyro(1,0x69);
 
+perf_counter_t pc_cli =             { "cli",           0, 0};
+perf_counter_t pc_line_follower =   { "line_follower", 0, 0};
+perf_counter_t pc_state_machine =   { "state_machine", 0, 0};
+
+perf_counter_t * perf_counters[] = {
+    &pc_cli,
+    &pc_line_follower,
+    &pc_state_machine,
+    NULL
+};
+
 bool emergency = true;
 bool get_emergency() { return emergency; }
 
@@ -96,12 +108,13 @@ void setup() {
 
 void loop()
 {
-    cli_loop();
-    line_follower_loop();
+    perf_counter_measure(&pc_cli, cli_loop());
+    perf_counter_measure(&pc_line_follower, line_follower_loop());
 
     unsigned long now = millis();
     static unsigned long prev_millis = 0;
 
+    perf_counter_start(&pc_state_machine);
     switch (robot_state)
     {
         case s_emergency:
@@ -140,4 +153,5 @@ void loop()
             }
             break;
     }
+    perf_counter_stop(&pc_state_machine);
 }

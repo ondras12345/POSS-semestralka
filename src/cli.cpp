@@ -5,6 +5,7 @@
 #include <Commander-API.hpp>
 #include <Commander-API-Commands.hpp>
 #include <Commander-IO.hpp>
+#include <perf_counter.h>
 #include "encoder.h"
 #include "motor.h"
 #include "line_follower.h"
@@ -115,12 +116,26 @@ usage:
 }
 
 
+static void cmnd_perf(char *args, Stream *response)
+{
+    extern perf_counter_t * perf_counters[];
+    for (perf_counter_t ** counter_ptr = perf_counters; *counter_ptr; counter_ptr++)
+    {
+        perf_counter_t * counter = *counter_ptr;
+        response->print(counter->name);
+        response->print('\t');
+        response->println(perf_counter_reset(counter));
+    }
+}
+
+
 static Commander::API_t API_tree[] = {
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
     apiElement("motor_move",    "Set motor output (nonlinear)", cmnd_motor_move),
     apiElement("motor_move_lin","Set motor output (linearized)",cmnd_motor_move_lin),
     apiElement("state",         "Get/set state machine state",  cmnd_state),
+    apiElement("perf",          "Print perf counters",          cmnd_perf),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };
