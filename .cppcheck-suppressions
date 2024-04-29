@@ -1,0 +1,4 @@
+# Warnings from 3rd party libraries
+# seems like I need a wildcard before .pio
+*:*/.pio/libdeps/*
+noExplicitConstructor:*lib/MeRGBLineFollower180motorAuriga/*
