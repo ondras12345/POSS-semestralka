@@ -1,10 +1,10 @@
-#include "pid.h"
+#include "PID.h"
 #include <string.h>
 
 
-void pid_init(pid_t *pid, float Ts)
+void PID_init(PID_t *pid, float Ts)
 {
-    memset(pid, 0, sizeof(pid_t));
+    memset(pid, 0, sizeof(PID_t));
     pid->b = 1.0;
     pid->b_old = 1.0;
     pid->c = 1.0;
@@ -15,7 +15,7 @@ void pid_init(pid_t *pid, float Ts)
 }
 
 
-void pid_new_params(pid_t *pid)
+void PID_new_params(PID_t *pid)
 {
     // TODO osetrit bezrazove prepnuti
     // %Offset stare hodnoty integrator pro kompenzaci razu vlivem zmeny
@@ -31,7 +31,7 @@ void pid_new_params(pid_t *pid)
     // %yi = yi -( cd1*yd + cd2*(c*wkm1-ykm1-(c*wkm2-ykm2) ) - (cd1_old*yd + cd2_old*(c_old*wkm1-ykm1-(c_old*wkm2-ykm2))) ); 
     // yi = yi - ( cd1*yd_old + cd2*(c*wkm1-ykm1-(c*wkm2-ykm2) )); %treti clen prictu na konci cyklu
 
-    // "old" budou soucasne, pri pristim volani pid_new_params uz budou old
+    // "old" budou soucasne, pri pristim volani PID_new_params uz budou old
     pid->Kp_old = pid->Kp;
     pid->Kd_old = pid->Kd;
     pid->b_old = pid->b;
@@ -45,7 +45,7 @@ void pid_new_params(pid_t *pid)
 }
 
 
-float pid_loop(pid_t *pid, float y, float w)
+float PID_loop(PID_t *pid, float y, float w)
 {
     // regulacni odchylka pro I, P, D
     float e = w - y - pid->tv;
@@ -80,3 +80,6 @@ float pid_loop(pid_t *pid, float y, float w)
 
     return u_sat;
 }
+
+
+// TODO write tests for pid

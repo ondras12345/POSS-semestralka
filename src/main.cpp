@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <MeAuriga.h>
 #include <perf_counter.h>
-#include <pid.h>
+#include <PID.h>
 #include "hardware.h"
 #include "encoder.h"
 #include "motor.h"
@@ -74,7 +74,7 @@ bool get_emergency() { return emergency; }
 
 // TODO
 #define PID_LINE_TS 20UL
-pid_t pid_line;
+PID_t PID_line;
 
 
 void setup() {
@@ -82,7 +82,7 @@ void setup() {
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
 
-    pid_init(&pid_line, PID_LINE_TS*1e-3);
+    PID_init(&PID_line, PID_LINE_TS*1e-3);
     conf_init();
 
     encoder_init();
@@ -146,12 +146,12 @@ void loop()
             // TODO start motors & controller
             robot_state = s_line_following;
             prev_millis = now-PID_LINE_TS-1;
-            pid_line.Kp = conf.Kp;
-            pid_line.Ki = conf.Ki;
-            pid_line.Tt = 1e3;
-            pid_line.Tf = 1e3;
-            pid_line.umax = conf.umax;
-            pid_new_params(&pid_line);
+            PID_line.Kp = conf.Kp;
+            PID_line.Ki = conf.Ki;
+            PID_line.Tt = 1e3;
+            PID_line.Tf = 1e3;
+            PID_line.umax = conf.umax;
+            PID_new_params(&PID_line);
             break;
 
         case s_line_following:
@@ -165,7 +165,7 @@ void loop()
                 if (now - prev_millis >= PID_LINE_TS)
                 {
                     perf_counter_start(&pc_pid_line);
-                    int8_t u = (int8_t)pid_loop(&pid_line, line_follower_offset(), 0);
+                    int8_t u = (int8_t)PID_loop(&PID_line, line_follower_offset(), 0);
                     perf_counter_stop(&pc_pid_line);
                     motor_move_lin(conf.base_speed-u, conf.base_speed+u);
                     prev_millis = now;

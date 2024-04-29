@@ -30,12 +30,12 @@ typedef struct {
     // TODO
     float yi;  // interni stav I
     float yd;  // interni stav D
-} pid_t;
+} PID_t;
 
 
-void pid_init(pid_t *, float Ts);
-void pid_new_params(pid_t *);
-float pid_loop(pid_t *, float y, float w);
+void PID_init(PID_t *, float Ts);
+void PID_new_params(PID_t *);
+float PID_loop(PID_t *, float y, float w);
 
 
 #ifdef __cplusplus
