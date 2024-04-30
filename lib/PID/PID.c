@@ -1,5 +1,6 @@
 #include "PID.h"
 #include <string.h>
+#include <math.h>
 
 
 void PID_init(PID_t *pid, float Ts)
@@ -9,6 +10,7 @@ void PID_init(PID_t *pid, float Ts)
     pid->c = 1.0;
     pid->umax = 1.0;
     pid->Ts = Ts;
+    pid->Tt = INFINITY;
 }
 
 
