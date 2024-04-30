@@ -10,6 +10,7 @@
 #include "robot.h"
 #include "conf.h"
 #include "imu.h"
+#include "turn.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -58,6 +59,7 @@ perf_counter_t pc_line_follower =   { "line_follower", 0, 0};
 perf_counter_t pc_state_machine =   { "state_machine", 0, 0};
 perf_counter_t pc_pid_line =        { "pid_line",      0, 0};
 perf_counter_t pc_imu =             { "IMU",           0, 0};
+perf_counter_t pc_turn =            { "turn",          0, 0};
 
 perf_counter_t * perf_counters[] = {
     &pc_cli,
@@ -65,6 +67,7 @@ perf_counter_t * perf_counters[] = {
     &pc_state_machine,
     &pc_pid_line,
     &pc_imu,
+    &pc_turn,
     NULL
 };
 
@@ -106,6 +109,7 @@ void setup() {
     // inicializace sledovani cary
     line_follower_init();
     imu_init();
+    turn_init();
 
     // inicializace sériového kanálu
     Serial.begin(115200);
@@ -119,6 +123,7 @@ void loop()
     perf_counter_measure(&pc_cli, cli_loop());
     perf_counter_measure(&pc_line_follower, line_follower_loop(now));
     perf_counter_measure(&pc_imu, imu_loop(now));
+    perf_counter_measure(&pc_turn, turn_loop(now));
 
     static unsigned long prev_millis = 0;
 
