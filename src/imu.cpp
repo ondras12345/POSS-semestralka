@@ -9,11 +9,11 @@ void imu_init()
     gyro.begin();
 }
 
-void imu_loop()
+void imu_loop(unsigned long now)
 {
     static unsigned long prev_millis = 0;
-    unsigned long now = millis();
     if (now - prev_millis < 10UL) return;
+    prev_millis = now;
 
     gyro.update();
 }

@@ -114,11 +114,12 @@ void setup() {
 
 void loop()
 {
+    unsigned long now = millis();
+
     perf_counter_measure(&pc_cli, cli_loop());
     perf_counter_measure(&pc_line_follower, line_follower_loop());
-    perf_counter_measure(&pc_imu, imu_loop());
+    perf_counter_measure(&pc_imu, imu_loop(now));
 
-    unsigned long now = millis();
     static unsigned long prev_millis = 0;
 
     perf_counter_start(&pc_state_machine);
