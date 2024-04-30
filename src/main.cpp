@@ -117,7 +117,7 @@ void loop()
     unsigned long now = millis();
 
     perf_counter_measure(&pc_cli, cli_loop());
-    perf_counter_measure(&pc_line_follower, line_follower_loop());
+    perf_counter_measure(&pc_line_follower, line_follower_loop(now));
     perf_counter_measure(&pc_imu, imu_loop(now));
 
     static unsigned long prev_millis = 0;

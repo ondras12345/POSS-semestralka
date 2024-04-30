@@ -13,7 +13,7 @@ typedef enum {
 } crossroad_t;
 
 void line_follower_init();
-void line_follower_loop();
+void line_follower_loop(unsigned long now);
 int16_t line_follower_offset();
 uint8_t line_follower_state();
 uint8_t line_follower_state_debounced();

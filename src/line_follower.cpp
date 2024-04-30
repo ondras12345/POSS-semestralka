@@ -18,11 +18,10 @@ void line_follower_init()
 }
 
 
-void line_follower_loop()
+void line_follower_loop(unsigned long now)
 {
     static unsigned long prev_millis = 0;
 
-    unsigned long now = millis();
     if (now - prev_millis < 10UL) return;
     prev_millis = now;
     // sam to stejne dela jen kazdych 9 ms
