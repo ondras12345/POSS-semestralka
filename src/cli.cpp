@@ -13,6 +13,7 @@
 #include "robot.h"
 #include "conf.h"
 #include "hardware.h"
+#include "turn.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -211,6 +212,24 @@ static void cmnd_imu(char *args, Stream *response)
 }
 
 
+static void cmnd_turn(char *args, Stream *response)
+{
+    int angle;
+    char c;
+    if (sscanf(args, " %d%c", &angle, &c) == 1)
+    {
+        response->print(F("turning "));
+        response->println(angle);
+        turn_turn_relative(angle);
+    }
+
+    response->print(F("turning: "));
+    response->println(turn_status());
+
+    response->println(F("usage: turn [target]"));
+}
+
+
 static Commander::API_t API_tree[] = {
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
@@ -220,6 +239,7 @@ static Commander::API_t API_tree[] = {
     apiElement("perf",          "Print perf counters",          cmnd_perf),
     apiElement("conf",          "Get/set config",               cmnd_conf),
     apiElement("imu",           "Get IMU state",                cmnd_imu),
+    apiElement("turn",          "Get / set turn state",         cmnd_turn),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };

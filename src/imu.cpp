@@ -24,7 +24,7 @@ double imu_angle_Y() { return gyro.getAngleY(); };
 double imu_angle_Z() { return gyro.getAngleZ(); };
 
 
-// TODO use IMU
+// IMU notes
 // - nas zajime osa Z, minus je doleva
 // - cisla jsou ve stupnich
 // - perf counter rika 2900us
