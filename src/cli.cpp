@@ -141,7 +141,7 @@ static void cmnd_perf(char *args, Stream *response)
 
 static void cmnd_conf(char *args, Stream *response)
 {
-    response->println("Usage: conf [name value]");
+    response->println(F("Usage: conf [name value]"));
 
     char * setting_name = strsep(&args, " ");
     char * setting_value = args;
@@ -155,7 +155,7 @@ static void cmnd_conf(char *args, Stream *response)
     //}
     else if (setting_value == nullptr)
     {
-        response->println("Missing value");
+        response->println(F("Missing value"));
     }
 
 #define scanconf_uint8_t(name) \
@@ -165,7 +165,7 @@ static void cmnd_conf(char *args, Stream *response)
         sscanf(setting_value, "%u", &tmp); \
         if (tmp > 255) \
         { \
-            response->println("Value not in range 0-255"); \
+            response->println(F("Value not in range 0-255")); \
             goto bad; \
         } \
         conf.name = (uint8_t)tmp; \
@@ -189,13 +189,13 @@ static void cmnd_conf(char *args, Stream *response)
 
     else
     {
-        response->print("Invalid config option: ");
+        response->print(F("Invalid config option: "));
         response->println(setting_name);
     }
 
 bad:
     response->println();
-    response->println("configuration:");
+    response->println(F("configuration:"));
     conf_print(response, conf);
 }
 
@@ -231,6 +231,7 @@ static void cmnd_turn(char *args, Stream *response)
 
 
 static Commander::API_t API_tree[] = {
+    // TODO PROGMEM
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
     apiElement("line",          "Read line follower",           cmnd_line),
     apiElement("motor_move",    "Set motor output (nonlinear)", cmnd_motor_move),

@@ -24,7 +24,7 @@ void conf_print(Print *response, conf_t c)
 #define PRINT_float(name) c.name
 #define PRINT_bool(name) (c.name ? '1' : '0')
 #define X_PRINT(type, name, default) \
-    response->print("conf " #name " "); \
+    response->print(F("conf " #name " ")); \
     response->println( PRINT_##type(name) );
 
     CONF_ITEMS(X_PRINT)
