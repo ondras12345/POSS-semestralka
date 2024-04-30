@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 #include <PID.h>
 
 
@@ -111,10 +112,39 @@ void test_PID()
 }
 
 
+void test_PID_time()
+{
+    PID_t pid;
+    PID_init(&pid, Ts);
+    pid.Kp = 33;
+    pid.Ki = 38;
+    pid.Kd = 6.6;
+    pid.Tf = 0.04;
+    pid.b = 0.6;
+    pid.c = 0.1;
+    pid.umax = 50e3;
+    pid.Tt = 5;
+    PID_new_params(&pid);
+
+    for (unsigned i = 0; i < 10; i++)
+    {
+        clock_t begin = clock();
+        for (size_t k = 0; k < 1000000; k++)
+        {
+            PID_loop(&pid, 1e-4, 0.1f*k);
+        }
+        clock_t end = clock();
+        double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+        printf("time_spent=%lf\n", time_spent);
+    }
+}
+
+
 int runUnityTests(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_PID);
+    RUN_TEST(test_PID_time);
     return UNITY_END();
 }
 
