@@ -54,20 +54,20 @@ MeRGBLed ledRing(0, numberOfLEDs );
 // bzučák
 MeBuzzer buzzer;
 
-perf_counter_t pc_cli =             { "cli",           0, 0};
-perf_counter_t pc_line_follower =   { "line_follower", 0, 0};
-perf_counter_t pc_state_machine =   { "state_machine", 0, 0};
-perf_counter_t pc_pid_line =        { "pid_line",      0, 0};
-perf_counter_t pc_imu =             { "IMU",           0, 0};
-perf_counter_t pc_turn =            { "turn",          0, 0};
+#define PERF_COUNTERS(X) \
+    X(cli) \
+    X(line_follower) \
+    X(state_machine) \
+    X(pid_line) \
+    X(imu) \
+    X(turn)
 
+#define X_pc(name) perf_counter_t pc_##name = {#name, 0, 0};
+PERF_COUNTERS(X_pc)
+
+#define X_pc_array(name) &pc_##name,
 perf_counter_t * perf_counters[] = {
-    &pc_cli,
-    &pc_line_follower,
-    &pc_state_machine,
-    &pc_pid_line,
-    &pc_imu,
-    &pc_turn,
+    PERF_COUNTERS(X_pc_array)
     NULL
 };
 
