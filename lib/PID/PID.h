@@ -5,31 +5,25 @@ extern "C" {
 #endif
 
 typedef struct {
-    // snare parametry pro bezrazove prepnuti
-    float Kp_old;
-    float b_old;
-    float Kd_old;
-    float Tf_old;
-    float c_old;
-    float yd_old;
     // parametry
     float Kp, Ki, Kd, b, c, Tt, Tf;
     // Tt ... casova konstanta vysledovani
     // Tf ... casova konstanta filtru D
+
     float umax;
     float Ts;
+
     // diskretni parametry
     float ci;
     float cd1;
     float cd2;
-    // stare vstupy
-    float wkm1, ykm1;
-    float tv;
-    float ekm1;  // posledni vstup I
-    float edm1;  // posledni vstup D
-    // TODO
+
+    // stare vstupy, interni stav
+    float wkm1, ykm1, wkm2, ykm2;
+    float tv, tvm1;
     float yi;  // interni stav I
     float yd;  // interni stav D
+    float yd_old;
 } PID_t;
 
 
