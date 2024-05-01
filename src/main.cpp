@@ -15,9 +15,6 @@
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
  * Prvni kriz neni potreba mapovat.
- *
- * TODO bluetooth nefunguje
- * sudo rfcomm bind 0 <btaddr>
  */
 
 // Ultrazvukovy snimac
@@ -84,6 +81,18 @@ void setup() {
     // nastav piny narazniku
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
+
+    // try to init bluetooth, TODO test
+    // sudo rfcomm bind 0 <btaddr>
+    // I am not sure if these are the correct commands
+    Serial.begin(38400);
+    Serial.println();
+    Serial.println("AT+NAMESLUKA");
+    Serial.flush();
+    delay(1100);
+    Serial.println("AT+BAUD8");
+    Serial.flush();
+    delay(1100);
 
     PID_init(&PID_line, PID_LINE_TS*1e-3);
     conf_init();
