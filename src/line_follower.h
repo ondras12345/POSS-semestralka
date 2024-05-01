@@ -12,6 +12,12 @@ typedef enum {
     cr_X = 'X', // +
 } crossroad_t;
 
+typedef enum {
+    crd_straight = '|',
+    crd_left = 'L',
+    crd_right = 'R',
+} crossroad_direction_t;
+
 void line_follower_init();
 void line_follower_loop(unsigned long now);
 int16_t line_follower_offset();
