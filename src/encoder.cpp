@@ -3,8 +3,8 @@
 #include "hardware.h"
 #include <util/atomic.h>
 
-static volatile long pulse_left;
-static volatile long pulse_right;
+static volatile unsigned long pulse_left;
+static volatile unsigned long pulse_right;
 
 
 static int8_t pulse_diff(bool A, bool B, bool oldA)
@@ -55,23 +55,13 @@ void encoder_init()
 }
 
 
-long encoder_pulse_left()
+encoder_position_t encoder_position()
 {
-    long r;
+    encoder_position_t pos;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        r = pulse_left;
+        pos.left = pulse_left;
+        pos.right = pulse_right;
     }
-    return r;
-}
-
-
-long encoder_pulse_right()
-{
-    long r;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        r = pulse_right;
-    }
-    return r;
+    return pos;
 }

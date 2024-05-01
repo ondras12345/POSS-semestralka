@@ -1,6 +1,11 @@
 #pragma once
 
+typedef struct
+{
+    unsigned long left;
+    unsigned long right;
+} encoder_position_t;
+
 void encoder_init();
 
-long encoder_pulse_left();
-long encoder_pulse_right();
+encoder_position_t encoder_position();

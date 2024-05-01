@@ -22,9 +22,10 @@ static void cmnd_encoder(char *args, Stream *response)
 {
     (void)args;
     response->print(F("encoder: L"));
-    response->print(encoder_pulse_left());
+    encoder_position_t pos = encoder_position();
+    response->print(pos.left);
     response->print(F(" R"));
-    response->println(encoder_pulse_right());
+    response->println(pos.right);
 }
 
 
