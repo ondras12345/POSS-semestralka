@@ -11,8 +11,6 @@
     X(float, turn_Kp, 0.0) \
     X(float, turn_Ki, 0.0) \
     X(float, turn_Kd, 0.0) \
-    X(float, turn_b, 1.0) \
-    X(float, turn_c, 0.0) \
     /* doporucuje se volit Tf = Td/3 ... Td/20 */ \
     X(float, turn_Tf, 0.5) \
     /* doporucuje se 0.5*Ti (PI) nebo sqrt(Ti*Td) (PID) */ \

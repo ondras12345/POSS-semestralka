@@ -6,10 +6,18 @@
 #include <PID.h>
 
 
-void test_PID()
+FILE* prep_outfile(const char * name)
 {
+    FILE * fo = fopen(name, "w");
+    TEST_ASSERT_NOT_NULL(fo);
+    fprintf(fo, "k\tu\ty\tdu\tw\n");
+    return fo;
+}
+
 #define Ts 0.01
 #define N_SIM ((size_t)(15/Ts))
+void test_PID()
+{
     PID_t pid;
     PID_init(&pid, Ts);
 
@@ -29,12 +37,7 @@ void test_PID()
     double y[N_SIM] = {0};
     double u[N_SIM] = {0};
 
-    TEST_ASSERT_FALSE_MESSAGE(chdir("test/test_PID"), "failed to chdir");
-
-    FILE * fo = fopen("test_PID.csv", "w");
-    TEST_ASSERT_NOT_NULL(fo);
-
-    fprintf(fo, "k\tu\ty\tdu\n");
+    FILE * fo = prep_outfile("test_PID.csv");
 
     for (size_t k = 0; k < N_SIM; k++)
     {
@@ -67,13 +70,10 @@ void test_PID()
         u[k] += du;
 
         // vypis
-        fprintf(fo, "%zu\t%e\t%e\t%e\n", k, u[k], y[k], du);
+        fprintf(fo, "%zu\t%e\t%e\t%e\t%e\n", k, u[k], y[k], du, w);
     }
 
     fclose(fo);
-
-    // gnuplot
-    fprintf(stderr, "gnuplot result: %d\n", system("./test_PID.gpi"));
 
     FILE * fi = fopen("test_PID_MATLAB.csv", "r");
     TEST_ASSERT_NOT_NULL(fi);
@@ -129,7 +129,7 @@ void test_PID_time()
     for (unsigned i = 0; i < 10; i++)
     {
         clock_t begin = clock();
-        for (size_t k = 0; k < 1000000; k++)
+        for (unsigned k = 0; k < 1000000U; k++)
         {
             PID_loop(&pid, 1e-4, 0.1f*k);
         }
@@ -140,11 +140,91 @@ void test_PID_time()
 }
 
 
+void test_PID_angle_wrap()
+{
+    TEST_ASSERT_EQUAL_FLOAT(0, PID_angle_wrap(0));
+    TEST_ASSERT_EQUAL_FLOAT(179, PID_angle_wrap(179));
+    TEST_ASSERT_EQUAL_FLOAT(-179, PID_angle_wrap(-179));
+    TEST_ASSERT_EQUAL_FLOAT(-90, PID_angle_wrap(270));
+    TEST_ASSERT_EQUAL_FLOAT(90, PID_angle_wrap(-270));
+    TEST_ASSERT_EQUAL_FLOAT(-90, PID_angle_wrap(990));
+}
+
+
+void test_PID_angle_loop()
+{
+    PID_angle_t pid;
+    PID_angle_init(&pid, Ts);
+
+    pid.Kp = 7.04;
+    pid.Ki = 6.17;
+    pid.Kd = 1.86;
+    pid.Tf = 0.0433;
+    pid.umax = 200;
+    pid.Tt = sqrt(pid.Kd / pid.Ki);
+    PID_angle_new_params(&pid);
+
+    double y[N_SIM] = {0};
+    double u[N_SIM] = {0};
+
+    FILE * fo = prep_outfile("test_PID_angle.csv");
+
+    for (size_t k = 0; k < N_SIM; k++)
+    {
+        double w = 0;
+        if (k >= 150) w = 70.0;
+        if (k > N_SIM*.25) w = 180.0;
+        if (k > N_SIM*.5) w = 185.0;
+        if (k > N_SIM*.66) w = -90.0;
+
+        if (k >= 1)
+        {
+            // odezva systemu - integrator
+            y[k] = y[k-1] + 0.5*Ts*u[k-1];
+
+            if (k == 220)
+            {
+                y[k] = 0;
+                PID_angle_reset(&pid, PID_angle_wrap(y[k]));
+            }
+
+
+            // vypocet PID
+            u[k] = PID_angle_loop(&pid, PID_angle_wrap(y[k]), PID_angle_wrap(w));
+        }
+
+        float du = 0;
+        fprintf(fo, "%zu\t%e\t%e\t%e\t%e\n", k, u[k], y[k], du, w);
+    }
+
+    fclose(fo);
+
+    // see if angle_wrap works
+    TEST_ASSERT_FLOAT_WITHIN(0.5, y[N_SIM-1], 270);
+    // see if reset worked - the step response must be the same
+    TEST_ASSERT_FLOAT_WITHIN(1e-8, y[150], y[220]);
+    TEST_ASSERT_FLOAT_WITHIN(1e-8, y[151], y[221]);
+    TEST_ASSERT_FLOAT_WITHIN(1e-8, y[172], y[242]);
+}
+
+
 int runUnityTests(void)
 {
+    if (chdir("test/test_PID"))
+    {
+        fprintf(stderr, "failed to chdir");
+        return 1;
+    }
+
     UNITY_BEGIN();
     RUN_TEST(test_PID);
     RUN_TEST(test_PID_time);
+    RUN_TEST(test_PID_angle_wrap);
+    RUN_TEST(test_PID_angle_loop);
+
+    // gnuplot
+    fprintf(stderr, "gnuplot result: %d\n", system("./test_PID.gpi"));
+
     return UNITY_END();
 }
 
