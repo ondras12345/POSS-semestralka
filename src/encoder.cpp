@@ -1,10 +1,11 @@
+#ifndef UNIT_TEST
 #include "encoder.h"
 #include <Arduino.h>
 #include "hardware.h"
 #include <util/atomic.h>
 
-static volatile unsigned long pulse_left;
-static volatile unsigned long pulse_right;
+static volatile uint32_t pulse_left;
+static volatile uint32_t pulse_right;
 
 
 static int8_t pulse_diff(bool A, bool B, bool oldA)
@@ -64,4 +65,11 @@ encoder_position_t encoder_position()
         pos.right = pulse_right;
     }
     return pos;
+}
+
+#endif // UNIT_TEST
+
+int32_t encoder_distance_pulses(encoder_position_t start, encoder_position_t end)
+{
+    return (int64_t((int32_t)(end.left-start.left)) + (int32_t)(end.right-start.right))/2;
 }
