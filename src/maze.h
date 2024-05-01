@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include "line_follower.h"
+#include "crossroad.h"
 
 typedef struct {
     /// Type of crossroad
