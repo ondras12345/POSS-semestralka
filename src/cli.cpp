@@ -292,12 +292,11 @@ static void print_maze_node(maze_route_node_t node, Print *response)
 
 static void cmnd_maze_print(char *args, Stream *response)
 {
-    response->println(F("maze_route_current (top to bottom)"));
-    response->print(F("i\tcrossroad\tdirection\tdistance [mm]"));
-    for (uint8_t i = maze_route_current.top-1; i != 255; i--)
+    response->println(F("maze_route_current (bottom to top)"));
+    response->print(F("\tcrossroad\tdirection\tdistance [mm]"));
+    for (uint8_t i = 0; i < maze_route_current.top; i++)
     {
-        response->print(i);
-        response->print('\t');
+        response->print(F("maze push "));
         print_maze_node(maze_route_current.stack[i], response);
     }
 }
