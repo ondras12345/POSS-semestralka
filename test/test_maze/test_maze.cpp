@@ -2,11 +2,6 @@
 
 #include "maze.cpp"
 
-bool compare_nodes(maze_route_node_t a, maze_route_node_t b)
-{
-    return a.crossroad == b.crossroad && a.direction == b.direction && a.distance_mm == b.distance_mm;
-}
-
 
 void test_maze_stack()
 {
@@ -24,11 +19,22 @@ void test_maze_stack()
 
     maze_route_push(&route, node1);
     maze_route_push(&route, node2);
+
+    node = maze_route_peek(&route);
+    TEST_ASSERT_EQUAL_CHAR(node2.crossroad, node.crossroad);
+    TEST_ASSERT_EQUAL_CHAR(node2.direction, node.direction);
+    TEST_ASSERT_EQUAL_UINT16(node2.distance_mm, node.distance_mm);
+
     node = maze_route_pop(&route);
-    TEST_ASSERT_TRUE(compare_nodes(node, node2));
-    TEST_ASSERT_FALSE(compare_nodes(node, node1));
+    TEST_ASSERT_EQUAL_CHAR(node2.crossroad, node.crossroad);
+    TEST_ASSERT_EQUAL_CHAR(node2.direction, node.direction);
+    TEST_ASSERT_EQUAL_UINT16(node2.distance_mm, node.distance_mm);
+    TEST_ASSERT_FALSE(node.direction == node1.direction);
+
     node = maze_route_pop(&route);
-    TEST_ASSERT_TRUE(compare_nodes(node, node1));
+    TEST_ASSERT_EQUAL_CHAR(node1.crossroad, node.crossroad);
+    TEST_ASSERT_EQUAL_CHAR(node1.direction, node.direction);
+    TEST_ASSERT_EQUAL_UINT16(node1.distance_mm, node.distance_mm);
 
     node = maze_route_pop(&route);
     TEST_ASSERT_EQUAL_UINT8(0, node.distance_mm);
