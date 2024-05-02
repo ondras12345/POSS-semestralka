@@ -146,7 +146,7 @@ static void cmnd_conf(char *args, Stream *response)
     response->println(F("Usage: conf [name value]"));
 
     char * setting_name = strsep(&args, " ");
-    char * setting_value = args;
+    const char * setting_value = args;
     if (setting_name == nullptr)
     {
         // this is ok, just print out config
@@ -235,7 +235,7 @@ static void cmnd_turn(char *args, Stream *response)
 static void cmnd_debug(char *args, Stream *response)
 {
     char * debugger_name = strsep(&args, " ");
-    char * debugger_value = args;
+    const char * debugger_value = args;
 
     if (debugger_name == nullptr)
     {
