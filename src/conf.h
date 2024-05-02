@@ -4,7 +4,7 @@
 
 #define CONF_ITEMS(X) \
     X(uint8_t, base_speed, 50) \
-    X(float, line_Kp, 0.5) \
+    X(float, line_Kp, 0.4) \
     X(uint8_t, line_umax, 50) \
     /* turn, TODO default values */ \
     X(float, turn_Kp, 0.0) \

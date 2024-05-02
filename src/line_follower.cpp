@@ -21,7 +21,9 @@ static uint8_t base_speed;
 void line_follower_init()
 {
     RGBLineFollower.begin();
-    RGBLineFollower.setKp(1);
+    // CLI readings will be multiplied by default Kp=0.3 until
+    // line_follower_follow() is first called.
+    //RGBLineFollower.setKp(1.0);
 }
 
 
@@ -30,9 +32,8 @@ void line_follower_loop(unsigned long now)
     static unsigned long controller_prev_millis = 0;
     if (now - controller_prev_millis >= PID_LINE_TS)
     {
-        float us = conf.line_Kp * line_follower_offset();
-        us = constrain(us, -conf.line_umax, conf.line_umax);
-        int8_t u = (int8_t)us;
+        int16_t off = line_follower_offset();
+        int8_t u = (int8_t)(constrain(off, -conf.line_umax, conf.line_umax));
         motor_move_lin(base_speed-u, base_speed+u);
         controller_prev_millis = now;
     }
@@ -194,6 +195,7 @@ bool line_follower_last_crossroad_updated()
 void line_follower_follow(uint8_t speed)
 {
     following = true;
+    RGBLineFollower.setKp(conf.line_Kp);
     base_speed = speed;
 }
 
