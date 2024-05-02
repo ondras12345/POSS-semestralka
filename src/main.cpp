@@ -81,7 +81,7 @@ void setup() {
     // try to init bluetooth, TODO test
     // sudo rfcomm bind 0 <btaddr>
     // I am not sure if these are the correct commands
-    Serial.begin(38400);
+    Serial.begin(38400);  // TODO or 9600 ??
     Serial.println();
     Serial.println("AT+NAMESLUKA");
     Serial.flush();
