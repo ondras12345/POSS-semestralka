@@ -312,7 +312,35 @@ static void cmnd_maze_pop(char *args, Stream *response)
 
 static void cmnd_maze_push(char *args, Stream *response)
 {
-    response->println("TODO implement");
+    char crossroad, direction, c;
+    uint16_t distance_mm;
+    if (sscanf(args, " %c %c %" SCNu16 "%c", &crossroad, &direction, &distance_mm, &c) != 3)
+    {
+        goto usage;
+    }
+
+    maze_route_node_t node;
+    // no input checking
+    node.crossroad = (crossroad_t)crossroad;
+
+    switch (direction)
+    {
+        case 'L':
+        case 'R':
+        case '|':
+            node.direction = (crossroad_direction_t)direction;
+            break;
+        default:
+            response->println(F("invalid direction"));
+            goto usage;
+    }
+    node.distance_mm = distance_mm;
+
+    maze_route_push(&maze_route_current, node);
+    return;
+
+usage:
+    response->println(F("usage: maze push crossrad direction distance_mm"));
 }
 
 
