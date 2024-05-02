@@ -165,6 +165,9 @@ void loop()
                 robot_state = s_stop;
             }
             break;
+
+        // TODO turn
+        // otocime se o ~110 stupnu a po ceste ulozime novy setpoint na care
     }
     perf_counter_stop(&pc_state_machine);
 }

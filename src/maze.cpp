@@ -25,3 +25,11 @@ void maze_route_push(maze_route_t *route, maze_route_node_t node)
         return;
     route->stack[route->top++] = node;
 }
+
+
+void maze_route_clone(maze_route_t *clone, maze_route_t *old)
+{
+    clone->top = old->top;
+    for (uint8_t i = 0; i < old->top; i++)
+        clone->stack[i] = old->stack[i];
+}

@@ -40,7 +40,6 @@ int runUnityTests(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_maze_stack);
-    // TODO test maze invert route
     return UNITY_END();
 }
 
