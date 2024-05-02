@@ -32,6 +32,7 @@ void turn_loop(unsigned long now)
         float y = imu_angle_Z();
         int16_t u = (int16_t)PID_angle_loop(&pid, y, target);
         motor_move_lin(-u, u);
+        // TODO keep encoder diff sum = 0?
 
         if (abs(PID_angle_wrap(y - target)) < 5.0 && abs(u) < 10)
         {

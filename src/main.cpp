@@ -55,7 +55,6 @@ MeBuzzer buzzer;
     X(cli) \
     X(line_follower) \
     X(state_machine) \
-    X(pid_line) \
     X(imu) \
     X(turn)
 
@@ -73,9 +72,6 @@ bool get_emergency() { return emergency; }
 
 
 // TODO
-#define PID_LINE_TS 20UL
-PID_t PID_line;
-
 
 void setup() {
     // nastav piny narazniku
@@ -94,7 +90,6 @@ void setup() {
     Serial.flush();
     delay(1100);
 
-    PID_init(&PID_line, PID_LINE_TS*1e-3);
     conf_init();
 
     encoder_init();
@@ -158,33 +153,16 @@ void loop()
             break;
 
         case s_line_follow:
-            // TODO start motors & controller
+            line_follower_follow(conf.base_speed);
             robot_state = s_line_following;
-            prev_millis = now-PID_LINE_TS-1;
-            PID_line.Kp = conf.Kp;
-            PID_line.Ki = conf.Ki;
-            PID_line.Tt = 1e3;
-            PID_line.Tf = 1e3;
-            PID_line.umax = conf.umax;
-            PID_new_params(&PID_line);
             break;
 
         case s_line_following:
             crossroad_t cr = line_follower_crossroad();  // TODO tato funkce neumi vsechny krizovatky
             if (cr != cr_I && cr != cr_7 && cr != cr_G)
             {
+                line_follower_stop();
                 robot_state = s_stop;
-            }
-            else
-            {
-                if (now - prev_millis >= PID_LINE_TS)
-                {
-                    perf_counter_start(&pc_pid_line);
-                    int8_t u = (int8_t)PID_loop(&PID_line, line_follower_offset(), 0);
-                    perf_counter_stop(&pc_pid_line);
-                    motor_move_lin(conf.base_speed-u, conf.base_speed+u);
-                    prev_millis = now;
-                }
             }
             break;
     }

@@ -10,3 +10,7 @@ uint8_t line_follower_state_debounced();
 crossroad_t line_follower_crossroad();
 crossroad_t line_follower_last_crossroad();
 bool line_follower_last_crossroad_updated();
+
+void line_follower_follow(uint8_t speed);
+void line_follower_stop();
+bool line_follower_following();

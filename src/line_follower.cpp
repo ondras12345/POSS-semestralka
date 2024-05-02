@@ -1,7 +1,10 @@
 #include "line_follower.h"
 #include <Arduino.h>
 #include <MeRGBLineFollower.h>
+#include <PID.h>
 #include "hardware.h"
+#include "conf.h"
+#include "motor.h"
 
 static MeRGBLineFollower RGBLineFollower(PORT_9);
 
@@ -9,6 +12,11 @@ static crossroad_t crossroad = cr_0;
 static crossroad_t last_crossroad = cr_0;
 static bool last_crossroad_updated = false;
 static uint8_t state_debounced = 0b1111;
+
+static bool following = false;
+#define PID_LINE_TS 20UL
+static PID_t PID_line;
+static uint8_t base_speed;
 
 
 void line_follower_init()
@@ -20,6 +28,15 @@ void line_follower_init()
 
 void line_follower_loop(unsigned long now)
 {
+    static unsigned long controller_prev_millis = 0;
+    if (now - controller_prev_millis >= PID_LINE_TS)
+    {
+        int8_t u = (int8_t)PID_loop(&PID_line, line_follower_offset(), 0);
+        motor_move_lin(base_speed-u, base_speed+u);
+        controller_prev_millis = now;
+    }
+
+
     static unsigned long prev_millis = 0;
 
     if (now - prev_millis < 10UL) return;
@@ -112,6 +129,8 @@ void line_follower_loop(unsigned long now)
             last_crossroad_updated = false;
         }
     }
+    // TODO last_crossroad se zmeni pri vjezdu do T (X)
+    // TODO add debug messages
 }
 
 
@@ -159,4 +178,32 @@ bool line_follower_last_crossroad_updated()
     bool tmp = last_crossroad_updated;
     last_crossroad_updated = false;
     return tmp;
+}
+
+
+void line_follower_follow(uint8_t speed)
+{
+    PID_init(&PID_line, PID_LINE_TS*1e-3);
+    PID_line.Kp = conf.Kp;
+    PID_line.Ki = conf.Ki;
+    PID_line.Tt = 1e3;
+    PID_line.Tf = 1e3;
+    PID_line.umax = conf.umax;
+    PID_new_params(&PID_line);
+
+    following = true;
+    base_speed = speed;
+}
+
+
+void line_follower_stop()
+{
+    following = false;
+    motor_move_lin(0, 0);
+}
+
+
+bool line_follower_following()
+{
+    return following;
 }
