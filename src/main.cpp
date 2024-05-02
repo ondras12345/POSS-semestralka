@@ -71,8 +71,6 @@ bool emergency = true;
 bool get_emergency() { return emergency; }
 
 
-// TODO
-
 void setup() {
     // nastav piny narazniku
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
