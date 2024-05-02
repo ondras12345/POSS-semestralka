@@ -4,6 +4,7 @@
 #include "hardware.h"
 #include "conf.h"
 #include "motor.h"
+#include "debug.h"
 
 static MeRGBLineFollower RGBLineFollower(PORT_9);
 
@@ -61,7 +62,8 @@ void line_follower_loop(unsigned long now)
         if (counters[i] >= LINE_FOLLOWER_DEBOUNCE)
         {
             state_debounced |= (1<<i);
-            counters[i] = LINE_FOLLOWER_DEBOUNCE; // tohle by nemelo byt potreba
+            // this should never be needed
+            counters[i] = LINE_FOLLOWER_DEBOUNCE;
         }
         else if (counters[i] == 0)
         {
@@ -107,6 +109,9 @@ void line_follower_loop(unsigned long now)
 
     if (prev_crossroad != crossroad)
     {
+        DEBUG_crossroad->print(F("[D] crossroad: "));
+        DEBUG_crossroad->println(crossroad);
+
         last_crossroad_updated = true;
         if (prev_crossroad == cr_T)
         {
@@ -128,9 +133,14 @@ void line_follower_loop(unsigned long now)
             // ignore prev_crossroad == cr_0 || prev_crossroad == cr_I
             last_crossroad_updated = false;
         }
+
+        if (last_crossroad_updated)
+        {
+            DEBUG_crossroad->print(F("[D] last crossroad: "));
+            DEBUG_crossroad->println(last_crossroad);
+        }
     }
     // TODO last_crossroad se zmeni pri vjezdu do T (X)
-    // TODO add debug messages
 }
 
 

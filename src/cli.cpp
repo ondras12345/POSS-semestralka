@@ -14,6 +14,7 @@
 #include "conf.h"
 #include "hardware.h"
 #include "turn.h"
+#include "debug.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -231,6 +232,49 @@ static void cmnd_turn(char *args, Stream *response)
 }
 
 
+static void cmnd_debug(char *args, Stream *response)
+{
+    char * debugger_name = strsep(&args, " ");
+    char * debugger_value = args;
+
+    if (debugger_name == nullptr)
+    {
+        // this is ok, just print out config
+    }
+    else if (debugger_value == nullptr)
+    {
+        response->println(F("missing value"));
+        goto usage;
+    }
+
+#define X_debug_scan(name) \
+    else if (strcmp(debugger_name, #name) == 0) \
+    { \
+        DEBUG_##name = (*debugger_value == '0') ? DEBUG_null : &Serial; \
+    }
+
+    DEBUGGERS(X_debug_scan)
+
+    else
+    {
+        response->print(F("Unknown debugger: "));
+        response->println(debugger_name);
+        goto usage;
+    }
+
+
+#define X_debug_print(name) \
+    response->print(F(#name ": ")); \
+    response->println(DEBUG_##name != DEBUG_null);
+
+    DEBUGGERS(X_debug_print)
+    return;
+
+usage:
+    response->println(F("usage: debug [name (1|0)]"));
+}
+
+
 static Commander::API_t API_tree[] = {
     // TODO PROGMEM
     apiElement("encoder",       "Read rotary encoders",         cmnd_encoder),
@@ -242,6 +286,7 @@ static Commander::API_t API_tree[] = {
     apiElement("conf",          "Get/set config",               cmnd_conf),
     apiElement("imu",           "Get IMU state",                cmnd_imu),
     apiElement("turn",          "Get / set turn state",         cmnd_turn),
+    apiElement("debug",         "Enable/disable debug",         cmnd_debug),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };
