@@ -44,6 +44,11 @@ static void cmnd_line(char *args, Stream *response)
     response->println((char)line_follower_crossroad());
     response->print(F("  last_crossroad: "));
     response->println((char)line_follower_last_crossroad());
+    response->print(F("  last_crossroad_position: "));
+    encoder_position_t pos = line_follower_last_crossroad_position();
+    response->print(pos.left);
+    response->print(F(", "));
+    response->println(pos.right);
 }
 
 

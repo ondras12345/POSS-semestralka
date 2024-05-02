@@ -12,6 +12,7 @@ static crossroad_t crossroad = cr_0;
 static crossroad_t last_crossroad = cr_0;
 static bool last_crossroad_updated = false;
 static uint8_t state_debounced = 0b1111;
+static encoder_position_t last_crossroad_position;
 
 static bool following = false;
 #define PID_LINE_TS 20UL
@@ -137,11 +138,12 @@ void line_follower_loop(unsigned long now)
 
         if (last_crossroad_updated)
         {
+            last_crossroad_position = encoder_position();
             DEBUG_crossroad->print(F("[D] last crossroad: "));
             DEBUG_crossroad->println(last_crossroad);
         }
     }
-    // TODO last_crossroad se zmeni pri vjezdu do T (X)
+    // TODO last_crossroad se zmeni pri vjezdu do T/X - nejdriv najde G/7
 }
 
 
@@ -180,6 +182,13 @@ crossroad_t line_follower_last_crossroad()
 {
     return last_crossroad;
 }
+
+
+encoder_position_t line_follower_last_crossroad_position()
+{
+    return last_crossroad_position;
+}
+
 
 /**
  * Return true if last_crossroad was updated and clears the flag.
