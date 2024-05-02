@@ -11,6 +11,7 @@
 #include "conf.h"
 #include "imu.h"
 #include "turn.h"
+#include "maze.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -89,6 +90,7 @@ void setup() {
     delay(1100);
 
     conf_init();
+    maze_route_init(&maze_route_current);  // TODO move?
 
     encoder_init();
     motor_init();

@@ -15,6 +15,7 @@
 #include "hardware.h"
 #include "turn.h"
 #include "debug.h"
+#include "maze.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -274,6 +275,41 @@ usage:
     response->println(F("usage: debug [name (1|0)]"));
 }
 
+static void print_maze_node(maze_route_node_t node, Print *response)
+{
+    response->print(node.crossroad);
+    response->print('\t');
+    response->print(node.direction);
+    response->print('\t');
+    response->println(node.distance_mm);
+}
+
+
+static void cmnd_maze_print(char *args, Stream *response)
+{
+    response->println(F("maze_route_current (top to bottom)"));
+    response->print(F("i\tcrossroad\tdirection\tdistance [mm]"));
+    for (uint8_t i = maze_route_current.top-1; i != 255; i--)
+    {
+        response->print(i);
+        response->print('\t');
+        print_maze_node(maze_route_current.stack[i], response);
+    }
+}
+
+
+static void cmnd_maze_pop(char *args, Stream *response)
+{
+    maze_route_node_t node = maze_route_pop(&maze_route_current);
+    print_maze_node(node, response);
+}
+
+
+static void cmnd_maze_push(char *args, Stream *response)
+{
+    response->println("TODO implement");
+}
+
 
 static Commander::API_t API_tree[] = {
     // TODO PROGMEM
@@ -287,6 +323,9 @@ static Commander::API_t API_tree[] = {
     apiElement("imu",           "Get IMU state",                cmnd_imu),
     apiElement("turn",          "Get / set turn state",         cmnd_turn),
     apiElement("debug",         "Enable/disable debug",         cmnd_debug),
+    apiElement("maze print",    "Print current maze route",     cmnd_maze_print),
+    apiElement("maze pop",      "Pop a node off the route",     cmnd_maze_pop),
+    apiElement("maze push",     "Push a node onto the route",   cmnd_maze_push),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };

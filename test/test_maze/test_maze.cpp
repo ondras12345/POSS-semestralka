@@ -11,6 +11,7 @@ bool compare_nodes(maze_route_node_t a, maze_route_node_t b)
 void test_maze_stack()
 {
     maze_route_t route;
+    maze_route_init(route);
     maze_route_node_t node;
 
     // nothing left on stack
