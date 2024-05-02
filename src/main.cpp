@@ -24,8 +24,8 @@
 
 // Servo
 const byte servoPin = 68;
-const byte servoMin = 13;
-const byte servoMax = 137;
+//const byte servoMin = 13;
+//const byte servoMax = 137;
 Servo servo;
 
 // RGB LED ring
