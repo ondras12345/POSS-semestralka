@@ -13,3 +13,7 @@ check:
 .PHONY: test
 test:
 	pio test -e native -v
+
+.PHONY: clean
+clean:
+	pio run -t clean
