@@ -225,6 +225,10 @@ void loop()
                 {
                     Serial.print(F("[W] undexpected crossroad: "));
                     Serial.println(cr);
+                    if (line_follower_crossroad() == cr_0)
+                    {
+                        robot_state = s_emergency;
+                    }
                 }
             }
             break;
