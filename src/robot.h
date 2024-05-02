@@ -6,7 +6,11 @@
     X(idle, 1) \
     X(line_follow, 2) \
     X(line_following, 3) \
-    X(stop, 4)
+    X(stop, 4) \
+    X(maze_follow, 5) \
+    X(maze_following, 6) \
+    X(maze_following_turning, 7) \
+    X(finish, 8)
 
 #define X_ENUM(name, value) s_##name = value,
 typedef enum {

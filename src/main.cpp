@@ -71,6 +71,9 @@ perf_counter_t * perf_counters[] = {
 bool emergency = true;
 bool get_emergency() { return emergency; }
 
+maze_route_t route_follow_route;
+uint8_t route_follow_index;
+
 
 void setup() {
     // nastav piny narazniku
@@ -135,39 +138,125 @@ void loop()
     switch (robot_state)
     {
         case s_emergency:
+            emergency = true;
             if (now - prev_millis >= 500)
             {
                 Serial.println(F("emergency, waiting for left bumper"));
                 prev_millis = now;
             }
-            if (digitalRead(PIN_BUMPER_LEFT) == LOW) emergency = false;
-            if (!get_emergency()) robot_state = s_idle;
+            if (digitalRead(PIN_BUMPER_LEFT) == LOW)
+            {
+                emergency = false;
+                robot_state = s_idle;
+            }
             break;
 
         case s_idle:
             break;
 
-        case s_stop:
-            motor_move_lin(0, 0);
-            robot_state = s_idle;
-            break;
-
         case s_line_follow:
+            // start following line
             line_follower_follow(conf.base_speed);
             robot_state = s_line_following;
             break;
 
         case s_line_following:
+        {
+            // keep following line until the next nonnegotiable crossroad,
+            // then stop
             crossroad_t cr = line_follower_crossroad();  // TODO tato funkce neumi vsechny krizovatky
             if (cr != cr_I && cr != cr_7 && cr != cr_G)
             {
                 line_follower_stop();
                 robot_state = s_stop;
             }
+        }
             break;
 
-        // TODO turn
-        // otocime se o ~110 stupnu a po ceste ulozime novy setpoint na care
+        case s_maze_follow:
+            // start following maze_route_current
+            maze_route_clone(&route_follow_route, &maze_route_current);
+            route_follow_index = 0;
+            line_follower_follow(conf.base_speed);
+            robot_state = s_maze_following;
+            break;
+
+        case s_maze_following:
+            if (!line_follower_following())
+            {
+                Serial.println(F("[E] should be following"));
+                robot_state = s_emergency;
+                break;
+            }
+
+            if (line_follower_last_crossroad_updated())
+            {
+                maze_route_node_t node = route_follow_route.stack[route_follow_index];
+                crossroad_t cr = line_follower_last_crossroad();
+                if (cr == node.crossroad)
+                {
+                    if (route_follow_index < route_follow_route.top)
+                    {
+                        route_follow_index++;
+                    }
+                    else
+                    {
+                        robot_state = s_finish;
+                        line_follower_stop();
+                        break;
+                    }
+
+                    switch (node.direction)
+                    {
+                        case crd_straight:
+                            break;
+
+                        case crd_left:
+                        case crd_right:
+                            line_follower_stop();
+                            float angle = 90+conf.turn_overshoot;
+                            if (node.direction == crd_left) angle *= -1;
+                            turn_turn_relative(angle, true);
+                            robot_state = s_maze_following_turning;
+                            break;
+                    }
+                }
+                else
+                {
+                    Serial.print(F("[W] undexpected crossroad: "));
+                    Serial.println(cr);
+                }
+            }
+            break;
+
+        case s_maze_following_turning:
+            if (!turn_status())
+            {
+                // finished turning
+                line_follower_follow(conf.base_speed);
+                robot_state = s_maze_following;
+            }
+            break;
+
+        case s_finish:
+            // jsme v cili
+            if (now - prev_millis >= 500UL)
+            {
+                prev_millis = now;
+                buzzer.tone(3000, 200);
+            }
+            if (!digitalRead(PIN_BUMPER_RIGHT))
+            {
+                robot_state = s_maze_follow;
+            }
+            break;
+
+        default:
+            Serial.println(F("[E] state not handled"));
+        case s_stop:
+            motor_move_lin(0, 0);
+            robot_state = s_idle;
+            break;
     }
     perf_counter_stop(&pc_state_machine);
 }

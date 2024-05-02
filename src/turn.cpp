@@ -3,11 +3,14 @@
 #include "motor.h"
 #include "hardware.h"
 #include "conf.h"
+#include "line_follower.h"
 #include <PID.h>
 #include <stdint.h>
 #include <Arduino.h>
 
 static bool turning = false;
+static bool expect_line = false;
+static uint16_t line_min = 0;
 static float target = 0.0;
 static PID_angle_t pid;
 
@@ -27,18 +30,28 @@ void turn_loop(unsigned long now)
     if (now - prev_millis < Ts) return;
     prev_millis = now;
 
-    if (turning)
-    {
-        float y = imu_angle_Z();
-        int16_t u = (int16_t)PID_angle_loop(&pid, y, target);
-        motor_move_lin(-u, u);
-        // TODO keep encoder diff sum = 0?
+    if (!turning) return;
 
-        if (abs(PID_angle_wrap(y - target)) < 5.0 && abs(u) < 10)
+    float y = imu_angle_Z();
+    int16_t u = (int16_t)PID_angle_loop(&pid, y, target);
+    motor_move_lin(-u, u);
+    // TODO keep encoder diff sum = 0?
+
+    float e = PID_angle_wrap(y - target);
+    if (expect_line && e < 0 && e > -2*conf.turn_overshoot)
+    {
+        int16_t off = line_follower_offset();
+        if (abs(off) < line_min)
         {
-            turning = false;
-            motor_move_lin(0, 0);
+            line_min = abs(off);
+            target = y;
         }
+    }
+
+    if (abs(e) < 5.0 && abs(u) < 10)
+    {
+        turning = false;
+        motor_move_lin(0, 0);
     }
 }
 
@@ -47,12 +60,14 @@ void turn_loop(unsigned long now)
  * Start a relative turn.
  * Angle is in degrees, negative angles turn left.
  */
-void turn_turn_relative(float angle)
+void turn_turn_relative(float angle, bool p_expect_line)
 {
     // No need to check emergency, motor_move already does that.
     turning = true;
     float y = imu_angle_Z();
     target = PID_angle_wrap(y + angle);
+    expect_line = p_expect_line;
+    line_min = -1;
 
     pid.Kp = conf.turn_Kp;
     pid.Ki = conf.turn_Ki;
