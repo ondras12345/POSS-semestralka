@@ -59,10 +59,10 @@ static void cmnd_motor_move(char *args, Stream *response)
     }
     if (abs(speed_left) > 255 || abs(speed_right) > 255)
     {
-        Serial.println(F("out of range"));
+        response->println(F("out of range"));
         goto usage;
     }
-    Serial.println(F("moving"));
+    response->println(F("moving"));
     motor_move(speed_left, speed_right);
     return;
 
@@ -84,10 +84,10 @@ static void cmnd_motor_move_lin(char *args, Stream *response)
     }
     if (abs(speed_left) > 255 || abs(speed_right) > 255)
     {
-        Serial.println(F("out of range"));
+        response->println(F("out of range"));
         goto usage;
     }
-    Serial.println(F("moving"));
+    response->println(F("moving"));
     motor_move_lin(speed_left, speed_right);
     return;
 
