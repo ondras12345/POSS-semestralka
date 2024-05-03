@@ -80,6 +80,7 @@ typedef enum {
     e_OK = 0,
     e_should_be_following = 1,
     e_unexpected_crossroad = 2,
+    e_emergency = 3,
 } error_t;
 
 /// Show 4-bit error code on LED ring
@@ -145,6 +146,7 @@ void loop()
     {
         case s_emergency:
             emergency = true;
+            error_code(e_emergency);
             if (now - prev_millis >= 500)
             {
                 Serial.println(F("emergency, waiting for left bumper"));
@@ -152,6 +154,7 @@ void loop()
             }
             if (digitalRead(PIN_BUMPER_LEFT) == LOW)
             {
+                error_code(e_OK);
                 emergency = false;
                 robot_state = s_idle;
             }
