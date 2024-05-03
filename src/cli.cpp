@@ -247,6 +247,8 @@ static void cmnd_turn(char *args, Stream *response)
     response->println(turn_status());
     response->print(F("target: "));
     response->println(turn_target());
+    response->print(F("angle_Z: "));
+    response->println(imu_angle_Z());
 
     response->println(F("usage: turn [[line] target]"));
 }
