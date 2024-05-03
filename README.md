@@ -13,3 +13,8 @@
 - [ ] refactored `line_follower` & tune Kp
 - [ ] `crossroad` debug
 - [ ] `s_maze_follow`
+
+## TODO implement
+- [ ] backtracking mapping
+  - separate mapping speed conf
+- [ ] speed up in straight segments
