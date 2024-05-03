@@ -12,6 +12,7 @@
 #include "imu.h"
 #include "turn.h"
 #include "maze.h"
+#include "debug.h"
 
 /*
  * V cili je potreba jasne indikovat, ze jsme do nej dojeli.
@@ -138,6 +139,14 @@ void loop()
     perf_counter_measure(&pc_line_follower, line_follower_loop(now));
     perf_counter_measure(&pc_imu, imu_loop(now));
     perf_counter_measure(&pc_turn, turn_loop(now));
+
+    static encoder_position_t last_report_pos = {0,0};
+    encoder_position_t pos = encoder_position();
+    if (encoder_distance_mm(last_report_pos, pos) >= 10)
+    {
+        DEBUG_encoder->println(F("[D] went 10mm"));
+        last_report_pos = pos;
+    }
 
     static unsigned long prev_millis = 0;
 

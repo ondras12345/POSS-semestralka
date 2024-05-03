@@ -3,7 +3,8 @@
 #include <Print.h>
 
 #define DEBUGGERS(X) \
-    X(crossroad)
+    X(crossroad) \
+    X(encoder)
 
 // All of the following Print pointers are guaranteed to not be nullptr.
 extern Print * DEBUG_null;
