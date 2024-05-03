@@ -244,7 +244,7 @@ void loop()
                         case crd_left:
                         case crd_right:
                             line_follower_stop();
-                            float angle = 90+conf.turn_overshoot;
+                            float angle = conf.turn_target;
                             if (node.direction == crd_left) angle *= -1;
                             turn_turn_relative(angle, true);
                             robot_state = s_maze_following_turning;
