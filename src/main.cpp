@@ -98,18 +98,6 @@ void setup() {
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
 
-    // try to init bluetooth, TODO test
-    // sudo rfcomm bind 0 <btaddr>
-    // I am not sure if these are the correct commands
-    Serial.begin(38400);  // TODO or 9600 ??
-    Serial.println();
-    Serial.println("AT+NAMESLUKA");
-    Serial.flush();
-    delay(1100);
-    Serial.println("AT+BAUD8");
-    Serial.flush();
-    delay(1100);
-
     conf_init();
     maze_route_init(&maze_route_current);  // TODO move?
 
