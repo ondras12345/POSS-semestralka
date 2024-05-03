@@ -67,7 +67,7 @@ void turn_turn_relative(float angle, bool p_expect_line)
     float y = imu_angle_Z();
     target = PID_angle_wrap(y + angle);
     expect_line = p_expect_line;
-    line_min = -1;
+    line_min = conf.line_umax;
 
     pid.Kp = conf.turn_Kp;
     pid.Ki = conf.turn_Ki;
