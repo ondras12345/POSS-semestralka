@@ -292,9 +292,9 @@ usage:
 
 static void print_maze_node(maze_route_node_t node, Print *response)
 {
-    response->print(node.crossroad);
+    response->write(node.crossroad);
     response->print('\t');
-    response->print(node.direction);
+    response->write(node.direction);
     response->print('\t');
     response->println(node.distance_mm);
 }
@@ -303,7 +303,7 @@ static void print_maze_node(maze_route_node_t node, Print *response)
 static void cmnd_maze_print(char *args, Stream *response)
 {
     response->println(F("maze_route_current (bottom to top)"));
-    response->print(F("\tcrossroad\tdirection\tdistance [mm]"));
+    response->println(F("\tcrossroad\tdirection\tdistance [mm]"));
     for (uint8_t i = 0; i < maze_route_current.top; i++)
     {
         response->print(F("maze_push "));
