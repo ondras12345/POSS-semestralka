@@ -43,7 +43,7 @@ void turn_loop(unsigned long now)
         int16_t off = line_follower_offset();
         if (abs(off) < line_min)
         {
-            line_min = abs(off);
+            line_min = off;
             target = y;
         }
     }
