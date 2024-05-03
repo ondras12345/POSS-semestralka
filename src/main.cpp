@@ -147,6 +147,7 @@ void loop()
         case s_emergency:
             emergency = true;
             error_code(e_emergency);
+            line_follower_stop();
             if (now - prev_millis >= 500)
             {
                 Serial.println(F("emergency, waiting for left bumper"));
