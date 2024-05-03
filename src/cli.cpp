@@ -52,6 +52,8 @@ static void cmnd_line(char *args, Stream *response)
     response->print(pos.left);
     response->print(F(", "));
     response->println(pos.right);
+    response->print(F("  last_crossroad distance [mm]: "));
+    response->println(encoder_distance_mm(pos, encoder_position()));
 }
 
 
