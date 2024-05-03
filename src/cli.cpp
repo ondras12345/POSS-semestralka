@@ -336,7 +336,7 @@ static void cmnd_maze_push(char *args, Stream *response)
     {
         case 'L':
         case 'R':
-        case '|':
+        case 'I':
             node.direction = (crossroad_direction_t)direction;
             break;
         default:

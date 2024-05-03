@@ -13,7 +13,7 @@ typedef enum {
 
 
 typedef enum {
-    crd_straight = '|',
+    crd_straight = 'I',
     crd_left = 'L',
     crd_right = 'R',
 } crossroad_direction_t;
