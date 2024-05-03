@@ -199,6 +199,12 @@ void loop()
                 break;
             }
 
+            if (line_follower_crossroad() == cr_0)
+            {
+                Serial.println(F("[E] cr_0"));
+                robot_state = s_emergency;
+            }
+
             if (line_follower_last_crossroad_updated())
             {
                 maze_route_node_t node = route_follow_route.stack[route_follow_index];
@@ -237,10 +243,6 @@ void loop()
                     Serial.write(cr);
                     Serial.println();
                     error_code(e_unexpected_crossroad);
-                    if (line_follower_crossroad() == cr_0)
-                    {
-                        robot_state = s_emergency;
-                    }
                 }
             }
             break;
