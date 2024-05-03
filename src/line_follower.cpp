@@ -13,6 +13,7 @@ static crossroad_t last_crossroad = cr_0;
 static bool last_crossroad_updated = false;
 static uint8_t state_debounced = 0b1111;
 static encoder_position_t last_crossroad_position;
+static encoder_position_t prev_zero_position;
 
 static bool following = false;
 #define PID_LINE_TS 20UL
@@ -81,6 +82,10 @@ void line_follower_loop(unsigned long now)
     // never change from complex prev_crossroad to simple
     if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
     {
+        if (prev_crossroad != cr_0 && crossroad == cr_0)
+        {
+            prev_zero_position = encoder_position();
+        }
         prev_crossroad = crossroad;
     }
 
@@ -154,8 +159,15 @@ void line_follower_loop(unsigned long now)
             DEBUG_crossroad->write(last_crossroad);
             DEBUG_crossroad->println();
 
+            if (crossroad == cr_0) prev_zero_position = encoder_position();
             prev_crossroad = crossroad;  // do not get stuck in more complex
         }
+    }
+    else if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_zero_position, encoder_position()) >= 30)
+    {
+        DEBUG_crossroad->println(F("[D] last crossroad: 0 (dist)"));
+        last_crossroad_updated = true;
+        last_crossroad = cr_0;
     }
 }
 

@@ -197,6 +197,7 @@ void loop()
             maze_route_clone(&route_follow_route, &maze_route_current);
             route_follow_index = 0;
             line_follower_follow(conf.base_speed);
+            line_follower_last_crossroad_updated();  // clear it
             robot_state = s_maze_following;
             DEBUG_maze_follow->println(F("[D] starting maze_follow"));
             break;
@@ -215,7 +216,7 @@ void loop()
                 maze_route_node_t node = route_follow_route.stack[route_follow_index];
                 crossroad_t cr = line_follower_last_crossroad();
 
-                if (line_follower_crossroad() == cr_0) // TODO
+                if (cr == cr_0)
                 {
                     Serial.println(F("[E] cr_0"));
                     robot_state = s_emergency;
