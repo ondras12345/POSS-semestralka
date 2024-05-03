@@ -112,7 +112,8 @@ void line_follower_loop(unsigned long now)
     if (prev_crossroad != crossroad)
     {
         DEBUG_crossroad->print(F("[D] crossroad: "));
-        DEBUG_crossroad->println(crossroad);
+        DEBUG_crossroad->write(crossroad);
+        DEBUG_crossroad->println();
 
         last_crossroad_updated = true;
         if (prev_crossroad == cr_T)
@@ -140,7 +141,8 @@ void line_follower_loop(unsigned long now)
         {
             last_crossroad_position = encoder_position();
             DEBUG_crossroad->print(F("[D] last crossroad: "));
-            DEBUG_crossroad->println(last_crossroad);
+            DEBUG_crossroad->write(last_crossroad);
+            DEBUG_crossroad->println();
         }
     }
     // TODO last_crossroad se zmeni pri vjezdu do T/X - nejdriv najde G/7
