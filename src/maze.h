@@ -23,5 +23,3 @@ maze_route_node_t maze_route_pop(maze_route_t *);
 maze_route_node_t maze_route_peek(maze_route_t *);
 void maze_route_push(maze_route_t *, maze_route_node_t);
 void maze_route_clone(maze_route_t *clone, maze_route_t *old);
-
-extern maze_route_t maze_route_current;

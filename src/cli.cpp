@@ -20,6 +20,9 @@
 static Shellminator shell(&Serial);
 static Commander commander;
 
+extern maze_route_t maze_route_current;
+
+
 static void cmnd_encoder(char *args, Stream *response)
 {
     (void)args;

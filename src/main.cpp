@@ -71,6 +71,8 @@ perf_counter_t * perf_counters[] = {
 bool emergency = true;
 bool get_emergency() { return emergency; }
 
+
+maze_route_t maze_route_current;
 maze_route_t route_follow_route;
 uint8_t route_follow_index;
 

@@ -1,7 +1,5 @@
 #include "maze.h"
 
-maze_route_t maze_route_current;  // initialized in main
-
 
 void maze_route_init(maze_route_t *route)
 {
