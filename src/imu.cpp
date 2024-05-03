@@ -15,7 +15,7 @@ void imu_loop(unsigned long now)
     if (now - prev_millis < 10UL) return;
     prev_millis = now;
 
-    gyro.update();
+    gyro.fast_update();
 }
 
 
