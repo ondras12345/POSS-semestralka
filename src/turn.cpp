@@ -84,3 +84,9 @@ bool turn_status()
 {
     return turning;
 }
+
+
+float turn_target()
+{
+    return target;
+}

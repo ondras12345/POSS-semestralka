@@ -245,6 +245,8 @@ static void cmnd_turn(char *args, Stream *response)
 
     response->print(F("turning: "));
     response->println(turn_status());
+    response->print(F("target: "));
+    response->println(turn_target());
 
     response->println(F("usage: turn [[line] target]"));
 }
