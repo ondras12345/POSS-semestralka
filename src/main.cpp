@@ -205,7 +205,7 @@ void loop()
                 crossroad_t cr = line_follower_last_crossroad();
                 if (cr == node.crossroad)
                 {
-                    if (route_follow_index < route_follow_route.top)
+                    if (route_follow_index < route_follow_route.top-1)
                     {
                         route_follow_index++;
                     }
@@ -234,7 +234,8 @@ void loop()
                 else
                 {
                     Serial.print(F("[W] undexpected crossroad: "));
-                    Serial.println(cr);
+                    Serial.write(cr);
+                    Serial.println();
                     error_code(e_unexpected_crossroad);
                     if (line_follower_crossroad() == cr_0)
                     {
