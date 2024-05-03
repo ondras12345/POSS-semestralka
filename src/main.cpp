@@ -74,6 +74,22 @@ bool get_emergency() { return emergency; }
 maze_route_t route_follow_route;
 uint8_t route_follow_index;
 
+typedef enum {
+    e_OK = 0,
+    e_should_be_following = 1,
+    e_unexpected_crossroad = 2,
+} error_t;
+
+/// Show 4-bit error code on LED ring
+void error_code(error_t code)
+{
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        ledRing.setColorAt(i, (code & (1<<i)) ? 255 : 0, 0, 0);
+    }
+    ledRing.show();
+}
+
 
 void setup() {
     // nastav piny narazniku
@@ -185,6 +201,7 @@ void loop()
             if (!line_follower_following())
             {
                 Serial.println(F("[E] should be following"));
+                error_code(e_should_be_following);
                 robot_state = s_emergency;
                 break;
             }
@@ -225,6 +242,7 @@ void loop()
                 {
                     Serial.print(F("[W] undexpected crossroad: "));
                     Serial.println(cr);
+                    error_code(e_unexpected_crossroad);
                     if (line_follower_crossroad() == cr_0)
                     {
                         robot_state = s_emergency;
@@ -246,6 +264,8 @@ void loop()
             // jsme v cili
             if (now - prev_millis >= 500UL)
             {
+                ledRing.setColor(0, green);
+                ledRing.show();
                 prev_millis = now;
                 buzzer.tone(3000, 200);
             }
