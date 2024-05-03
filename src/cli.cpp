@@ -306,7 +306,7 @@ static void cmnd_maze_print(char *args, Stream *response)
     response->print(F("\tcrossroad\tdirection\tdistance [mm]"));
     for (uint8_t i = 0; i < maze_route_current.top; i++)
     {
-        response->print(F("maze push "));
+        response->print(F("maze_push "));
         print_maze_node(maze_route_current.stack[i], response);
     }
 }
@@ -349,7 +349,7 @@ static void cmnd_maze_push(char *args, Stream *response)
     return;
 
 usage:
-    response->println(F("usage: maze push crossrad direction distance_mm"));
+    response->println(F("usage: maze_push crossrad direction distance_mm"));
 }
 
 
@@ -365,9 +365,9 @@ static Commander::API_t API_tree[] = {
     apiElement("imu",           "Get IMU state",                cmnd_imu),
     apiElement("turn",          "Get / set turn state",         cmnd_turn),
     apiElement("debug",         "Enable/disable debug",         cmnd_debug),
-    apiElement("maze print",    "Print current maze route",     cmnd_maze_print),
-    apiElement("maze pop",      "Pop a node off the route",     cmnd_maze_pop),
-    apiElement("maze push",     "Push a node onto the route",   cmnd_maze_push),
+    apiElement("maze_print",    "Print current maze route",     cmnd_maze_print),
+    apiElement("maze_pop",      "Pop a node off the route",     cmnd_maze_pop),
+    apiElement("maze_push",     "Push a node onto the route",   cmnd_maze_push),
     // commander pre-made commands
     API_ELEMENT_UPTIME,
 };
