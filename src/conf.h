@@ -3,8 +3,7 @@
 #include <Arduino.h>
 
 #define CONF_ITEMS(X) \
-    /* TODO mm_per_pulse default value */ \
-    X(float, mm_per_pulse, 1.0) \
+    X(float, mm_per_pulse, 0.201451757605416f) \
     X(uint8_t, base_speed, 50) \
     X(float, line_Kp, 0.4) \
     X(uint8_t, line_umax, 50) \
