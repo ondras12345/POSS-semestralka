@@ -231,10 +231,17 @@ static void cmnd_turn(char *args, Stream *response)
         turn_turn_relative(angle);
     }
 
+    if (sscanf(args, " line %d%c", &angle, &c) == 1)
+    {
+        response->print(F("turning to line "));
+        response->println(angle);
+        turn_turn_relative(angle, true);
+    }
+
     response->print(F("turning: "));
     response->println(turn_status());
 
-    response->println(F("usage: turn [target]"));
+    response->println(F("usage: turn [[line] target]"));
 }
 
 
