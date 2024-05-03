@@ -253,11 +253,11 @@ static void cmnd_debug(char *args, Stream *response)
     char * debugger_name = strsep(&args, " ");
     const char * debugger_value = args;
 
-    if (debugger_name == nullptr)
+    if (debugger_name == nullptr || *debugger_name == '\0')
     {
         // this is ok, just print out config
     }
-    else if (debugger_value == nullptr)
+    else if (debugger_value == nullptr || *debugger_name == '\0')
     {
         response->println(F("missing value"));
         goto usage;
