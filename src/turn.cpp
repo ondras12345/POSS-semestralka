@@ -38,7 +38,7 @@ void turn_loop(unsigned long now)
     // TODO keep encoder diff sum = 0?
 
     float e = PID_angle_wrap(y - target);
-    if (expect_line && e < 0 && e > -2*conf.turn_overshoot)
+    if (expect_line && e < 0 && e > -conf.turn_tolerance)
     {
         int16_t off = line_follower_offset();
         if (abs(off) < line_min)

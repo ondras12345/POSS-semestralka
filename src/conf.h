@@ -16,7 +16,8 @@
     X(float, turn_Tf, 0.5) \
     /* doporucuje se 0.5*Ti (PI) nebo sqrt(Ti*Td) (PID) */ \
     X(float, turn_Tt, 15.0) \
-    X(uint8_t, turn_overshoot, 20)
+    X(uint8_t, turn_overshoot, 15) \
+    X(uint8_t, turn_tolerance, 45)
 
 #define X_STRUCT(type, name, default) type name;
 typedef struct {
