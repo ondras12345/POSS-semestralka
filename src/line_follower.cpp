@@ -88,13 +88,13 @@ void line_follower_loop(unsigned long now)
     {
         case 0b0001:
         case 0b0011:
-        //case 0b0111:  // to uz je moc
+        case 0b0111:
             crossroad = cr_G;
             break;
 
         case 0b1000:
         case 0b1100:
-        //case 0b1110:  // to uz je moc
+        case 0b1110:
             crossroad = cr_7;
             break;
 
