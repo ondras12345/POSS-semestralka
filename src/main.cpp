@@ -198,6 +198,7 @@ void loop()
             route_follow_index = 0;
             line_follower_follow(conf.base_speed);
             robot_state = s_maze_following;
+            DEBUG_maze_follow->println(F("[D] starting maze_follow"));
             break;
 
         case s_maze_following:
@@ -214,7 +215,7 @@ void loop()
                 maze_route_node_t node = route_follow_route.stack[route_follow_index];
                 crossroad_t cr = line_follower_last_crossroad();
 
-                if (cr == cr_0 && encoder_distance_mm(line_follower_last_crossroad_position(), pos) >= 50)
+                if (line_follower_crossroad() == cr_0) // TODO
                 {
                     Serial.println(F("[E] cr_0"));
                     robot_state = s_emergency;
@@ -223,6 +224,7 @@ void loop()
 
                 if (cr == node.crossroad)
                 {
+                    DEBUG_maze_follow->println(F("[D] expected last crossroad"));
                     if (route_follow_index < route_follow_route.top-1)
                     {
                         route_follow_index++;
@@ -246,6 +248,8 @@ void loop()
                             if (node.direction == crd_left) angle *= -1;
                             turn_turn_relative(angle, true);
                             robot_state = s_maze_following_turning;
+                            DEBUG_maze_follow->print(F("[D] turning "));
+                            DEBUG_maze_follow->println(angle);
                             break;
                     }
                 }
@@ -265,6 +269,7 @@ void loop()
                 // finished turning
                 line_follower_follow(conf.base_speed);
                 robot_state = s_maze_following;
+                DEBUG_maze_follow->println(F("[D] finished turning "));
             }
             break;
 

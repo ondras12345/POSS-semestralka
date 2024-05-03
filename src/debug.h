@@ -4,7 +4,8 @@
 
 #define DEBUGGERS(X) \
     X(crossroad) \
-    X(encoder)
+    X(encoder) \
+    X(maze_follow)
 
 // All of the following Print pointers are guaranteed to not be nullptr.
 extern Print * DEBUG_null;
