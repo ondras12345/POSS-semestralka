@@ -76,12 +76,14 @@ void line_follower_loop(unsigned long now)
         }
     }
 
+
     static crossroad_t prev_crossroad = cr_0;
     // never change from complex prev_crossroad to simple
     if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
     {
         prev_crossroad = crossroad;
     }
+
     // detekce krizovatek
     // 0 je cara
     switch (state_debounced)
@@ -120,37 +122,41 @@ void line_follower_loop(unsigned long now)
         DEBUG_crossroad->write(crossroad);
         DEBUG_crossroad->println();
 
-        last_crossroad_updated = true;
-        if (prev_crossroad == cr_T)
+        if (crossroad == cr_I || crossroad == cr_0)
         {
-            if (crossroad == cr_I) last_crossroad = cr_X;
-            else last_crossroad = cr_T;
-        }
-        else if (prev_crossroad == cr_G)
-        {
-            if (crossroad == cr_I) last_crossroad = cr_E;
-            else last_crossroad = cr_G;
-        }
-        else if (prev_crossroad == cr_7)
-        {
-            if (crossroad == cr_I) last_crossroad = cr_3;
-            else last_crossroad = cr_7;
-        }
-        else
-        {
-            // ignore prev_crossroad == cr_0 || prev_crossroad == cr_I
-            last_crossroad_updated = false;
-        }
-
-        if (last_crossroad_updated)
-        {
+            last_crossroad_updated = true;
+            if (crossroad == cr_0) last_crossroad = prev_crossroad;
+            else
+            {
+                switch (prev_crossroad)
+                {
+                    case cr_T:
+                        last_crossroad = cr_X;
+                        break;
+                    case cr_G:
+                        last_crossroad = cr_E;
+                        break;
+                    case cr_7:
+                        last_crossroad = cr_3;
+                        break;
+                    case cr_0:
+                        last_crossroad = cr_0;
+                        break;
+                    default:
+                        Serial.print(F("[E] weird prev_crossroad: "));
+                        Serial.write(prev_crossroad);
+                        Serial.println();
+                        break;
+                }
+            }
             last_crossroad_position = encoder_position();
             DEBUG_crossroad->print(F("[D] last crossroad: "));
             DEBUG_crossroad->write(last_crossroad);
             DEBUG_crossroad->println();
+
+            prev_crossroad = crossroad;  // do not get stuck in more complex
         }
     }
-    // TODO last_crossroad se zmeni pri vjezdu do T/X - nejdriv najde G/7
 }
 
 
