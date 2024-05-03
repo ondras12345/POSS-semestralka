@@ -103,6 +103,8 @@ void line_follower_loop(unsigned long now)
             break;
 
         case 0b1001:
+        case 0b1101:
+        case 0b1011:
             crossroad = cr_I;
             break;
 
