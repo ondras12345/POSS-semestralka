@@ -271,6 +271,7 @@ void loop()
         default:
             Serial.println(F("[E] state not handled"));
         case s_stop:
+            line_follower_stop();
             motor_move_lin(0, 0);
             robot_state = s_idle;
             break;
