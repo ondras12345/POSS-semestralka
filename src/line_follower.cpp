@@ -37,7 +37,7 @@ void line_follower_loop(unsigned long now)
         {
             int16_t off = line_follower_offset();
             int8_t u = (int8_t)(constrain(off, -conf.line_umax, conf.line_umax));
-            motor_move_lin(base_speed-u, base_speed+u);
+            motor_move_lin(base_speed+u, base_speed-u);
             controller_prev_millis = now;
         }
     }
