@@ -30,13 +30,16 @@ void line_follower_init()
 
 void line_follower_loop(unsigned long now)
 {
-    static unsigned long controller_prev_millis = 0;
-    if (now - controller_prev_millis >= PID_LINE_TS)
+    if (following)
     {
-        int16_t off = line_follower_offset();
-        int8_t u = (int8_t)(constrain(off, -conf.line_umax, conf.line_umax));
-        motor_move_lin(base_speed-u, base_speed+u);
-        controller_prev_millis = now;
+        static unsigned long controller_prev_millis = 0;
+        if (now - controller_prev_millis >= PID_LINE_TS)
+        {
+            int16_t off = line_follower_offset();
+            int8_t u = (int8_t)(constrain(off, -conf.line_umax, conf.line_umax));
+            motor_move_lin(base_speed-u, base_speed+u);
+            controller_prev_millis = now;
+        }
     }
 
 
