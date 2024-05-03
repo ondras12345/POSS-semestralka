@@ -209,16 +209,18 @@ void loop()
                 break;
             }
 
-            if (line_follower_crossroad() == cr_0)
-            {
-                Serial.println(F("[E] cr_0"));
-                robot_state = s_emergency;
-            }
-
             if (line_follower_last_crossroad_updated())
             {
                 maze_route_node_t node = route_follow_route.stack[route_follow_index];
                 crossroad_t cr = line_follower_last_crossroad();
+
+                if (cr == cr_0 && encoder_distance_mm(line_follower_last_crossroad_position(), pos) >= 50)
+                {
+                    Serial.println(F("[E] cr_0"));
+                    robot_state = s_emergency;
+                    break;
+                }
+
                 if (cr == node.crossroad)
                 {
                     if (route_follow_index < route_follow_route.top-1)
