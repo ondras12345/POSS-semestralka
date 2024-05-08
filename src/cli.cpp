@@ -263,7 +263,7 @@ static void cmnd_debug(char *args, Stream *response)
     {
         // this is ok, just print out config
     }
-    else if (debugger_value == nullptr || *debugger_name == '\0')
+    else if (debugger_value == nullptr || *debugger_value == '\0')
     {
         response->println(F("missing value"));
         goto usage;
