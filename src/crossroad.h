@@ -9,6 +9,7 @@ typedef enum {
     cr_E = 'E', // doprava a rovne
     cr_3 = '3', // doleva a rovne
     cr_X = 'X', // +
+    cr_i = 'i', // dead end
 } crossroad_t;
 
 

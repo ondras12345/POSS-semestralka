@@ -130,7 +130,11 @@ void line_follower_loop(unsigned long now)
         if (crossroad == cr_I || crossroad == cr_0)
         {
             last_crossroad_updated = true;
-            if (crossroad == cr_0) last_crossroad = prev_crossroad;
+            if (crossroad == cr_0)
+            {
+                if (prev_crossroad == cr_I) last_crossroad = cr_i;  // dead end
+                else last_crossroad = prev_crossroad;
+            }
             else
             {
                 switch (prev_crossroad)
