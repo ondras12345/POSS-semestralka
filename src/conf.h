@@ -9,7 +9,6 @@
     /* line_Kp must be between 0 and 1.0 */ \
     X(float, line_Kp, 0.8) \
     X(uint8_t, line_umax, 50) \
-    /* turn, TODO default values */ \
     X(float, turn_Kp, 15.0) \
     X(float, turn_Ki, 30.0) \
     X(float, turn_Kd, 0.0) \
