@@ -15,7 +15,6 @@
 #include "hardware.h"
 #include "turn.h"
 #include "debug.h"
-#include "maze.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
@@ -296,7 +295,7 @@ usage:
     response->println(F("usage: debug [name (1|0)]"));
 }
 
-static void print_maze_node(maze_route_node_t node, Print *response)
+void print_maze_node(maze_route_node_t node, Print *response)
 {
     response->write(node.crossroad);
     response->print('\t');

@@ -5,6 +5,7 @@
 #define CONF_ITEMS(X) \
     X(float, mm_per_pulse, 0.201451757605416f) \
     X(uint8_t, base_speed, 50) \
+    X(uint8_t, map_speed, 30) \
     /* line_Kp must be between 0 and 1.0 */ \
     X(float, line_Kp, 0.8) \
     X(uint8_t, line_umax, 50) \
