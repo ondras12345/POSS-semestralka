@@ -277,8 +277,8 @@ void loop()
 
             int32_t dist = encoder_distance_mm(line_follower_last_crossroad_position(), pos);
             line_follower_follow(
-                (dist >= conf.fast_offset_mm &&
-                 dist <= node.distance_mm - conf.fast_offset_mm)
+                ((dist >= conf.fast_offset_mm &&
+                 dist <= node.distance_mm - conf.fast_offset_mm) || node.direction == crd_straight)
                 ? conf.fast_speed
                 : conf.base_speed
             );
