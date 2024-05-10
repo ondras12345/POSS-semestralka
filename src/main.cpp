@@ -267,6 +267,7 @@ void loop()
             break;
 
         case s_maze_following:
+            {
             if (!line_follower_following())
             {
                 Serial.println(F("[E] should be following"));
@@ -275,9 +276,18 @@ void loop()
                 break;
             }
 
+            maze_route_node_t node = route_follow_route.stack[route_follow_index];
+
+            int32_t dist = encoder_distance_mm(line_follower_last_crossroad_position(), pos);
+            line_follower_follow(
+                (dist >= conf.fast_offset_mm &&
+                 dist <= node.distance_mm - conf.fast_offset_mm)
+                ? conf.fast_speed
+                : conf.base_speed
+            );
+
             if (line_follower_last_crossroad_updated())
             {
-                maze_route_node_t node = route_follow_route.stack[route_follow_index];
                 crossroad_t cr = line_follower_last_crossroad();
 
                 if (cr == cr_0)
@@ -315,6 +325,7 @@ void loop()
                     error_code(e_unexpected_crossroad);
                 }
             }
+            }
             break;
 
         case s_maze_following_turning:
@@ -330,7 +341,7 @@ void loop()
         case s_map_start:
             map_backtracking = false;
             maze_route_init(&maze_route_current);  // clear route
-            map_prev_cr_pos = encoder_position();
+            map_prev_cr_pos = pos;
             line_follower_follow(conf.map_speed);
             line_follower_last_crossroad_updated();  // clear 'last crossroad updated' flag
             robot_state = s_map_straight;

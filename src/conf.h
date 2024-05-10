@@ -4,8 +4,11 @@
 
 #define CONF_ITEMS(X) \
     X(float, mm_per_pulse, 0.201451757605416f) \
+    /* TODO set speeds */ \
     X(uint8_t, base_speed, 50) \
+    X(uint8_t, fast_speed, 100) \
     X(uint8_t, map_speed, 30) \
+    X(uint8_t, fast_offset_mm, 50) \
     /* line_Kp must be between 0 and 1.0 */ \
     X(float, line_Kp, 0.8) \
     X(uint8_t, line_umax, 50) \
