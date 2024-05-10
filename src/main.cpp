@@ -258,7 +258,7 @@ void loop()
             maze_route_clone(&route_follow_route, &maze_route_current);
             route_follow_index = 0;
             line_follower_follow(conf.base_speed);
-            line_follower_last_crossroad_updated();  // clear it
+            line_follower_clear();
             robot_state = s_maze_following;
             DEBUG_maze_follow->println(F("[D] starting maze_follow"));
             break;
@@ -331,7 +331,7 @@ void loop()
                 // finished turning
                 line_follower_follow(conf.base_speed);
                 robot_state = s_maze_following;
-                line_follower_last_crossroad_updated();  // clear last_crossroad_updated flag
+                line_follower_clear();
                 DEBUG_maze_follow->println(F("[D] finished turning "));
             }
             break;
@@ -341,7 +341,7 @@ void loop()
             maze_route_init(&maze_route_current);  // clear route
             map_prev_cr_pos = pos;
             line_follower_follow(conf.map_speed);
-            line_follower_last_crossroad_updated();  // clear 'last crossroad updated' flag
+            line_follower_clear();
             robot_state = s_map_straight;
             break;
 
@@ -456,7 +456,7 @@ void loop()
                 // finished turning
                 line_follower_follow(conf.map_speed);
                 robot_state = s_map_straight;
-                line_follower_last_crossroad_updated();  // clear last_crossroad_updated flag
+                line_follower_clear();
                 DEBUG_map->println(F("[D] finished turning "));
             }
             break;

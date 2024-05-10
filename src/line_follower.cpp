@@ -10,6 +10,7 @@ static MeRGBLineFollower RGBLineFollower(PORT_9);
 
 static crossroad_t crossroad = cr_0;
 static crossroad_t last_crossroad = cr_0;
+static crossroad_t prev_crossroad = cr_0;
 static bool last_crossroad_updated = false;
 static uint8_t state_debounced = 0b1111;
 static encoder_position_t last_crossroad_position;
@@ -59,18 +60,18 @@ void line_follower_loop(unsigned long now)
     {
         if (state & (1<<i))
         {
-            if (counters[i] < LINE_FOLLOWER_DEBOUNCE) counters[i]++;
+            if (counters[i] < conf.line_debounce) counters[i]++;
         }
         else
         {
             if (counters[i] > 0) counters[i]--;
         }
 
-        if (counters[i] >= LINE_FOLLOWER_DEBOUNCE)
+        if (counters[i] >= conf.line_debounce)
         {
             state_debounced |= (1<<i);
             // this should never be needed
-            counters[i] = LINE_FOLLOWER_DEBOUNCE;
+            counters[i] = conf.line_debounce;
         }
         else if (counters[i] == 0)
         {
@@ -79,7 +80,6 @@ void line_follower_loop(unsigned long now)
     }
 
 
-    static crossroad_t prev_crossroad = cr_0;
     // never change from complex prev_crossroad to simple
     if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
     {
@@ -130,15 +130,15 @@ void line_follower_loop(unsigned long now)
     {
         DEBUG_crossroad->print(F("[D] crossroad: "));
         DEBUG_crossroad->write(crossroad);
-        DEBUG_crossroad->println();
+        DEBUG_crossroad->print('\t');
+        DEBUG_crossroad->println(state_debounced, BIN);
 
         if (crossroad == cr_I || crossroad == cr_0)
         {
             last_crossroad_updated = true;
             if (crossroad == cr_0)
             {
-                if (prev_crossroad == cr_I) last_crossroad = cr_i;  // dead end
-                else last_crossroad = prev_crossroad;
+                last_crossroad = prev_crossroad;
             }
             else
             {
@@ -172,7 +172,14 @@ void line_follower_loop(unsigned long now)
             prev_crossroad = crossroad;  // do not get stuck in more complex
         }
     }
-    else if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, encoder_position()) >= 30)
+    else if (last_crossroad == cr_I && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, encoder_position()) >= 80)
+    {
+        // dead end
+        DEBUG_crossroad->println(F("[D] last crossroad: i (dist)"));
+        last_crossroad_updated = true;
+        last_crossroad = cr_i;
+    }
+    else if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, encoder_position()) >= 100)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: 0 (dist)"));
         last_crossroad_updated = true;
@@ -238,6 +245,15 @@ bool line_follower_last_crossroad_updated()
     bool tmp = last_crossroad_updated;
     last_crossroad_updated = false;
     return tmp;
+}
+
+
+/// Reset crossroad detection. This should be called when on an 'I' crossroad.
+void line_follower_clear()
+{
+    DEBUG_crossroad->println(F("[D] line_follower_clear"));
+    last_crossroad_updated = false;
+    prev_crossroad = cr_I;
 }
 
 

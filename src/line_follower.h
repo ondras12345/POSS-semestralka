@@ -12,6 +12,7 @@ crossroad_t line_follower_crossroad();
 crossroad_t line_follower_last_crossroad();
 encoder_position_t line_follower_last_crossroad_position();
 bool line_follower_last_crossroad_updated();
+void line_follower_clear();
 
 void line_follower_follow(uint8_t speed);
 void line_follower_stop();

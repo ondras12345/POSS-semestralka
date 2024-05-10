@@ -25,6 +25,4 @@
 #define PIN_BUMPER_LEFT 62
 #define PIN_BUMPER_RIGHT 67
 
-#define LINE_FOLLOWER_DEBOUNCE 5  // * 10ms
-
 bool get_emergency();
