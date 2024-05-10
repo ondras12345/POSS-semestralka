@@ -12,10 +12,10 @@
 - [x] cli `maze pop`
 - [x] refactored `line_follower` & tune Kp
 - [x] `crossroad` debug
-- [ ] `s_maze_follow`
-- [ ] backtracking mapping
-  - separate mapping speed conf
-- [ ] speed up in straight segments
+- [x] `s_maze_follow`
+- [x] speed up in straight segments
+- [ ] map
+- [ ] test dead end detection
 
 ## TODO implement
 - [ ] imu sometimes measures nonsense
@@ -40,17 +40,14 @@ conf turn_Kd 0.00
 conf turn_Tf 0.50
 conf turn_Tt 3.00
 ```
-### Test route
+
+### Mapping
 ```
 debug crossroad 1
 debug encoder 1
-debug maze_follow 1
+debug map 1
 
-maze_push X I 100
-maze_push 3 I 300
-maze_push X L 300
-maze_push G R 300
-maze_push 7 L 300
+state map_start
 ```
 
 
@@ -71,7 +68,8 @@ maze_push 3 L 300
 maze_push 3 L 600
 maze_push X R 1200
 maze_push F I 300
-# TODO is this finished?
+
+state maze_follow
 ```
 
 
