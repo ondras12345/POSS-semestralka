@@ -202,7 +202,7 @@ void loop()
     perf_counter_measure(&pc_turn, turn_loop(now));
 
     static encoder_position_t last_report_pos = {0,0};
-    encoder_position_t pos = encoder_position();
+    const encoder_position_t pos = encoder_position();
     if (encoder_distance_mm(last_report_pos, pos) >= 10)
     {
         DEBUG_encoder->println(F("[D] went 10mm"));

@@ -69,6 +69,8 @@ maze_push E R 1200
 maze_push X I 1200
 maze_push 3 L 300
 maze_push 3 L 600
+maze_push X R 1200
+maze_push F I 300
 # TODO is this finished?
 ```
 

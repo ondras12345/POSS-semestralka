@@ -21,7 +21,7 @@
     X(float, turn_Tt, 15.0) \
     X(uint8_t, turn_target, 70) \
     X(uint8_t, turn_tolerance, 45) \
-    X(uint8_t, line_debounce, 5) /* *10ms */
+    X(uint8_t, line_debounce, 3) /* *10ms */
 
 #define X_STRUCT(type, name, default) type name;
 typedef struct {

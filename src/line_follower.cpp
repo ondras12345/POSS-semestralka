@@ -16,6 +16,7 @@ static uint8_t state_debounced = 0b1111;
 static encoder_position_t last_crossroad_position;
 static encoder_position_t prev_0_pos;
 static encoder_position_t prev_T_pos;
+static encoder_position_t prev_nontrivial_pos;  // position of prev cr that is not cr_0 or cr_I
 
 static bool following = false;
 #define PID_LINE_TS 20UL
@@ -80,16 +81,18 @@ void line_follower_loop(unsigned long now)
     }
 
 
+    const encoder_position_t pos = encoder_position();
+
     // never change from complex prev_crossroad to simple
     if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
     {
         if (prev_crossroad != cr_0 && crossroad == cr_0)
         {
-            prev_0_pos = encoder_position();
+            prev_0_pos = pos;
         }
         else if (prev_crossroad != cr_T && crossroad == cr_T)
         {
-            prev_T_pos = encoder_position();
+            prev_T_pos = pos;
         }
         prev_crossroad = crossroad;
     }
@@ -128,23 +131,34 @@ void line_follower_loop(unsigned long now)
             break;
     }
 
+    if (crossroad != cr_0 && crossroad != cr_I)
+    {
+        prev_nontrivial_pos = pos;
+    }
+
+    static crossroad_t prev_crossroad_cp = cr_0;
     if (prev_crossroad != crossroad)
     {
         DEBUG_crossroad->print(F("[D] crossroad: "));
         DEBUG_crossroad->write(crossroad);
         DEBUG_crossroad->print('\t');
         DEBUG_crossroad->println(state_debounced, BIN);
+        prev_crossroad_cp = prev_crossroad;
+    }
+
+    if (encoder_distance_mm(prev_nontrivial_pos, pos) >= 10)
+    {
 
         if (crossroad == cr_I || crossroad == cr_0)
         {
             last_crossroad_updated = true;
             if (crossroad == cr_0)
             {
-                last_crossroad = prev_crossroad;
+                last_crossroad = prev_crossroad_cp;
             }
             else
             {
-                switch (prev_crossroad)
+                switch (prev_crossroad_cp)
                 {
                     case cr_T:
                         last_crossroad = cr_X;
@@ -160,34 +174,35 @@ void line_follower_loop(unsigned long now)
                         break;
                     default:
                         Serial.print(F("[E] weird prev_crossroad: "));
-                        Serial.write(prev_crossroad);
+                        Serial.write(prev_crossroad_cp);
                         Serial.println();
                         break;
                 }
             }
-            last_crossroad_position = encoder_position();
+            last_crossroad_position = pos;
             DEBUG_crossroad->print(F("[D] last crossroad: "));
             DEBUG_crossroad->write(last_crossroad);
             DEBUG_crossroad->println();
 
-            if (crossroad == cr_0) prev_0_pos = encoder_position();
+            if (crossroad == cr_0) prev_0_pos = pos;
             prev_crossroad = crossroad;  // do not get stuck in more complex
         }
     }
-    else if (last_crossroad == cr_I && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, encoder_position()) >= 80)
+
+    if (last_crossroad == cr_I && crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 80)
     {
         // dead end
         DEBUG_crossroad->println(F("[D] last crossroad: i (dist)"));
         last_crossroad_updated = true;
         last_crossroad = cr_i;
     }
-    else if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, encoder_position()) >= 100)
+    else if (last_crossroad != cr_0 && crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 100)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: 0 (dist)"));
         last_crossroad_updated = true;
         last_crossroad = cr_0;
     }
-    else if (last_crossroad != cr_F && prev_crossroad == cr_T && encoder_distance_mm(prev_T_pos, encoder_position()) >= 80)
+    else if (last_crossroad != cr_F && crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 80)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: F (dist)"));
         last_crossroad_updated = true;
