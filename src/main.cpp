@@ -154,6 +154,7 @@ void error_code(error_t code)
         ledRing.setColorAt(i, (code & (1<<i)) ? 255 : 0, 0, 0);
     }
     ledRing.show();
+    buzzer.tone(440, 150);
 }
 
 
