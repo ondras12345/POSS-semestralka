@@ -276,9 +276,8 @@ void loop()
             maze_route_node_t node = route_follow_route.stack[route_follow_index];
 
             int32_t dist = encoder_distance_mm(line_follower_last_crossroad_position(), pos);
-            // TODO this still slows down after the straight crossroad
             line_follower_follow(
-                (dist >= conf.fast_offset_mm &&
+                ((dist >= conf.fast_offset_mm || route_follow_route.stack[route_follow_index-1].direction == crd_straight) &&
                  (dist <= node.distance_mm - conf.fast_offset_mm || node.direction == crd_straight)
                 )
                 ? conf.fast_speed
