@@ -10,7 +10,7 @@ static MeRGBLineFollower RGBLineFollower(PORT_9);
 
 static crossroad_t crossroad = cr_0;
 static crossroad_t last_crossroad = cr_0;
-static crossroad_t prev_crossroad = cr_0;
+static crossroad_t prev_crossroad_cp = cr_0;
 static bool last_crossroad_updated = false;
 static uint8_t state_debounced = 0b1111;
 static encoder_position_t last_crossroad_position;
@@ -83,20 +83,7 @@ void line_follower_loop(unsigned long now)
 
 
     const encoder_position_t pos = encoder_position();
-    if (prev_crossroad != cr_0 && crossroad == cr_0)
-    {
-        prev_0_pos = pos;
-    }
-    else if (prev_crossroad != cr_T && crossroad == cr_T)
-    {
-        prev_T_pos = pos;
-    }
-
-    // never change from complex prev_crossroad to simple
-    if (prev_crossroad != cr_T && crossroad != cr_0 && crossroad != cr_I)
-    {
-        prev_crossroad = crossroad;
-    }
+    crossroad_t prev_crossroad = crossroad;
 
     // detekce krizovatek
     // 0 je cara
@@ -132,24 +119,38 @@ void line_follower_loop(unsigned long now)
             break;
     }
 
+    if (prev_crossroad != cr_0 && crossroad == cr_0)
+    {
+        prev_0_pos = pos;
+    }
+    else if (prev_crossroad != cr_T && crossroad == cr_T)
+    {
+        prev_T_pos = pos;
+    }
+
     if (crossroad != cr_0 && crossroad != cr_I)
     {
         prev_nontrivial_pos = pos;
     }
 
-    static crossroad_t prev_crossroad_cp = cr_0;
     if (prev_crossroad != crossroad)
     {
-        // TODO prev_crossroad will newer change to 0 or I
+        // never change from complex prev_crossroad to simple
+        if (prev_crossroad_cp != cr_T && prev_crossroad != cr_0 && prev_crossroad != cr_I)
+        {
+            prev_crossroad_cp = prev_crossroad;
+            handled = false;
+        }
+
         DEBUG_crossroad->print(F("[D] crossroad: "));
         DEBUG_crossroad->write(crossroad);
         DEBUG_crossroad->print('\t');
         DEBUG_crossroad->print(state_debounced, BIN);
         DEBUG_crossroad->print(F("\tprev: "));
         DEBUG_crossroad->write(prev_crossroad);
+        DEBUG_crossroad->print(F("\tprev_cp: "));
+        DEBUG_crossroad->write(prev_crossroad_cp);
         DEBUG_crossroad->println();
-        prev_crossroad_cp = prev_crossroad;
-        handled = false;
     }
 
     if (encoder_distance_mm(prev_nontrivial_pos, pos) >= 10 && !handled)
@@ -196,7 +197,7 @@ void line_follower_loop(unsigned long now)
             }
 
             if (crossroad == cr_0) prev_0_pos = pos;
-            prev_crossroad = crossroad;  // do not get stuck in more complex
+            prev_crossroad_cp = crossroad;  // do not get stuck in more complex
         }
     }
 
@@ -281,7 +282,7 @@ void line_follower_clear()
 {
     DEBUG_crossroad->println(F("[D] line_follower_clear"));
     last_crossroad_updated = false;
-    prev_crossroad = cr_I;
+    prev_crossroad_cp = cr_I;
     handled = true;
 }
 
