@@ -226,7 +226,7 @@ void loop()
             {
                 error_code(e_OK);
                 emergency = false;
-                robot_state = s_idle;
+                robot_state = s_idle;  // TODO start mapping instead
             }
             break;
 
@@ -264,7 +264,7 @@ void loop()
             break;
 
         case s_maze_following:
-            {
+        {
             if (!line_follower_following())
             {
                 Serial.println(F("[E] should be following"));
@@ -322,7 +322,7 @@ void loop()
                     error_code(e_unexpected_crossroad);
                 }
             }
-            }
+        }
             break;
 
         case s_maze_following_turning:
