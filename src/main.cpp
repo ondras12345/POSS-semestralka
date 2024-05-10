@@ -158,7 +158,8 @@ void error_code(error_t code)
 }
 
 
-void setup() {
+void setup()
+{
     // nastav piny narazniku
     pinMode(PIN_BUMPER_LEFT, INPUT_PULLUP);
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
@@ -171,25 +172,20 @@ void setup() {
 
     // pripoj a omez servo
     servo.attach(servoPin);//,servoMin,servoMax);
-    servo.write(90);
+    servo.write(90);  // jinak se trese
 
     // inicializace RGB LED ringu
-    // pro ovládání slouží metoda
-    // bool MeRGBLed::setColor(uint8_t index, uint8_t red, uint8_t green, uint8_t blue)
-    ledRing.setpin( rgbLEDringPin );
-    ledRing.setColor( RINGALLLEDS, 0, 0, 0);
+    ledRing.setpin(rgbLEDringPin);
+    ledRing.setColor(RINGALLLEDS, 0, 0, 0);
     ledRing.show();
 
-    // nastavení bzučáku
     buzzer.setpin(PIN_BUZZER);
     buzzer.noTone();
 
-    // inicializace sledovani cary
     line_follower_init();
     imu_init();
     turn_init();
 
-    // inicializace sériového kanálu
     Serial.begin(115200);
     cli_init();
 
@@ -468,7 +464,7 @@ void loop()
             // jsme v cili
             if (now - prev_millis >= 500UL)
             {
-                ledRing.setColor(0, green);
+                ledRing.setColor(RINGALLLEDS, green);
                 ledRing.show();
                 prev_millis = now;
                 buzzer.tone(3000, 200);
