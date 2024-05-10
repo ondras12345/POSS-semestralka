@@ -276,6 +276,7 @@ void loop()
             maze_route_node_t node = route_follow_route.stack[route_follow_index];
 
             int32_t dist = encoder_distance_mm(line_follower_last_crossroad_position(), pos);
+            // TODO this still slows down after the straight crossroad
             line_follower_follow(
                 ((dist >= conf.fast_offset_mm &&
                  dist <= node.distance_mm - conf.fast_offset_mm) || node.direction == crd_straight)
@@ -405,6 +406,8 @@ void loop()
                 }
                 else
                 {
+                    if (cr == cr_I) break;
+
                     if (cr == cr_i)
                     {
                         // dead end, turn 180 degrees

@@ -140,6 +140,7 @@ void line_follower_loop(unsigned long now)
     static crossroad_t prev_crossroad_cp = cr_0;
     if (prev_crossroad != crossroad)
     {
+        // TODO prev_crossroad will newer change to 0 or I
         DEBUG_crossroad->print(F("[D] crossroad: "));
         DEBUG_crossroad->write(crossroad);
         DEBUG_crossroad->print('\t');
