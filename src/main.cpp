@@ -305,6 +305,7 @@ void loop()
                     else
                     {
                         robot_state = s_finish;
+                        DEBUG_maze_follow->println("[D] finish");
                         line_follower_stop();
                         break;
                     }

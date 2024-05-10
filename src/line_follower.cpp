@@ -17,6 +17,7 @@ static encoder_position_t last_crossroad_position;
 static encoder_position_t prev_0_pos;
 static encoder_position_t prev_T_pos;
 static encoder_position_t prev_nontrivial_pos;  // position of prev cr that is not cr_0 or cr_I
+static bool handled = true;
 
 static bool following = false;
 #define PID_LINE_TS 20UL
@@ -82,18 +83,18 @@ void line_follower_loop(unsigned long now)
 
 
     const encoder_position_t pos = encoder_position();
+    if (prev_crossroad != cr_0 && crossroad == cr_0)
+    {
+        prev_0_pos = pos;
+    }
+    else if (prev_crossroad != cr_T && crossroad == cr_T)
+    {
+        prev_T_pos = pos;
+    }
 
     // never change from complex prev_crossroad to simple
-    if (!(prev_crossroad == cr_T && (crossroad == cr_G || crossroad == cr_7 )))
+    if (prev_crossroad != cr_T && crossroad != cr_0 && crossroad != cr_I)
     {
-        if (prev_crossroad != cr_0 && crossroad == cr_0)
-        {
-            prev_0_pos = pos;
-        }
-        else if (prev_crossroad != cr_T && crossroad == cr_T)
-        {
-            prev_T_pos = pos;
-        }
         prev_crossroad = crossroad;
     }
 
@@ -142,13 +143,17 @@ void line_follower_loop(unsigned long now)
         DEBUG_crossroad->print(F("[D] crossroad: "));
         DEBUG_crossroad->write(crossroad);
         DEBUG_crossroad->print('\t');
-        DEBUG_crossroad->println(state_debounced, BIN);
+        DEBUG_crossroad->print(state_debounced, BIN);
+        DEBUG_crossroad->print(F("\tprev: "));
+        DEBUG_crossroad->write(prev_crossroad);
+        DEBUG_crossroad->println();
         prev_crossroad_cp = prev_crossroad;
+        handled = false;
     }
 
-    if (encoder_distance_mm(prev_nontrivial_pos, pos) >= 10)
+    if (encoder_distance_mm(prev_nontrivial_pos, pos) >= 10 && !handled)
     {
-
+        handled = true;
         if (crossroad == cr_I || crossroad == cr_0)
         {
             last_crossroad_updated = true;
@@ -170,7 +175,9 @@ void line_follower_loop(unsigned long now)
                         last_crossroad = cr_3;
                         break;
                     case cr_0:
-                        last_crossroad = cr_0;
+                        // cr_0 is handled somewhere else
+                        //last_crossroad = cr_0;
+                        last_crossroad_updated = false;
                         break;
                     default:
                         Serial.print(F("[E] weird prev_crossroad: "));
@@ -179,10 +186,13 @@ void line_follower_loop(unsigned long now)
                         break;
                 }
             }
-            last_crossroad_position = pos;
-            DEBUG_crossroad->print(F("[D] last crossroad: "));
-            DEBUG_crossroad->write(last_crossroad);
-            DEBUG_crossroad->println();
+            if (last_crossroad_updated)
+            {
+                last_crossroad_position = pos;
+                DEBUG_crossroad->print(F("[D] last crossroad: "));
+                DEBUG_crossroad->write(last_crossroad);
+                DEBUG_crossroad->println();
+            }
 
             if (crossroad == cr_0) prev_0_pos = pos;
             prev_crossroad = crossroad;  // do not get stuck in more complex
@@ -196,13 +206,13 @@ void line_follower_loop(unsigned long now)
         last_crossroad_updated = true;
         last_crossroad = cr_i;
     }
-    else if (last_crossroad != cr_0 && crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 100)
+    else if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 100)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: 0 (dist)"));
         last_crossroad_updated = true;
         last_crossroad = cr_0;
     }
-    else if (last_crossroad != cr_F && crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 80)
+    else if (last_crossroad != cr_F && prev_crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 80)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: F (dist)"));
         last_crossroad_updated = true;
@@ -271,6 +281,7 @@ void line_follower_clear()
     DEBUG_crossroad->println(F("[D] line_follower_clear"));
     last_crossroad_updated = false;
     prev_crossroad = cr_I;
+    handled = true;
 }
 
 
