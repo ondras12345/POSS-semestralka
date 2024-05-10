@@ -226,7 +226,13 @@ void loop()
             {
                 error_code(e_OK);
                 emergency = false;
-                robot_state = s_idle;  // TODO start mapping instead
+                robot_state = s_map_start;
+            }
+            if (digitalRead(PIN_BUMPER_RIGHT) == LOW)
+            {
+                error_code(e_OK);
+                emergency = false;
+                robot_state = s_maze_follow;
             }
             break;
 
@@ -255,6 +261,13 @@ void loop()
 
         case s_maze_follow:
             // start following maze_route_current
+            if (maze_route_current.top == 0)
+            {
+                // if this was triggered by pressing right bumper in emergency
+                // mode and there is no route, go to idle state
+                robot_state = s_idle;
+                break;
+            }
             maze_route_clone(&route_follow_route, &maze_route_current);
             route_follow_index = 0;
             line_follower_follow(conf.base_speed);
