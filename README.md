@@ -13,14 +13,22 @@
 - [x] refactored `line_follower` & tune Kp
 - [x] `crossroad` debug
 - [ ] `s_maze_follow`
-
-## TODO implement
-- [ ] imu sometimes measures nonsense
-  - TODO try compass?
 - [ ] backtracking mapping
   - separate mapping speed conf
 - [ ] speed up in straight segments
 
+## TODO implement
+- [ ] imu sometimes measures nonsense
+  - There is no magnetic compass on board
+  - Gyro is calibrated 500ms after boot. Ensure no movement.
+- [ ] test for backtracking, optimize `map_dir_order`
+  - I would need to mock all of these:
+    - encoder distance
+    - crossroad detection
+    - line_follower
+    - turn
+    - Serial / DEBUG
+    - error_code
 
 
 ## Notes
@@ -195,6 +203,22 @@ sluka:$ [D] went 10mm
 [E] cr_0
 emergency, waiting for left bumper
 emergency, waiting for left bumper
+```
+
+
+### Final route (manual)
+```
+maze_push X I 100
+maze_push 3 I 300
+maze_push X L 300
+maze_push G R 300
+maze_push 7 L 300
+maze_push G R 600
+maze_push E R 1200
+maze_push X I 1200
+maze_push 3 L 300
+maze_push 3 L 600
+# TODO is this finished?
 ```
 
 
