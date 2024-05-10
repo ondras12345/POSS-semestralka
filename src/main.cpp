@@ -331,6 +331,7 @@ void loop()
                 // finished turning
                 line_follower_follow(conf.base_speed);
                 robot_state = s_maze_following;
+                line_follower_last_crossroad_updated();  // clear last_crossroad_updated flag
                 DEBUG_maze_follow->println(F("[D] finished turning "));
             }
             break;
@@ -455,6 +456,7 @@ void loop()
                 // finished turning
                 line_follower_follow(conf.map_speed);
                 robot_state = s_map_straight;
+                line_follower_last_crossroad_updated();  // clear last_crossroad_updated flag
                 DEBUG_map->println(F("[D] finished turning "));
             }
             break;
