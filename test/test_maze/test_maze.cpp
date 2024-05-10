@@ -1,6 +1,63 @@
 #include <unity.h>
+#include <ArduinoFake.h>  // needed for Print (debug.h)
+using namespace fakeit;
 
 #include "maze.cpp"
+#include "conf.cpp"
+#include "encoder.cpp"
+#include "debug.cpp"
+#include "crossroad.cpp"
+#include "line_follower.cpp"
+
+// mocks
+encoder_position_t pos;
+encoder_position_t encoder_position()
+{
+    return pos;
+}
+int16_t speed_left, speed_right;
+void motor_move_lin(int16_t L, int16_t R)
+{
+    speed_left = L;
+    speed_right = R;
+}
+int16_t line_offset;
+int16_t line_follower_offset()
+{
+    return line_offset;
+}
+uint8_t line_state;
+uint8_t line_follower_state()
+{
+    return line_state;
+}
+void turn_turn_relative(float angle, bool expect_line)
+{
+    return;
+}
+bool turn_status()
+{
+    return false;
+}
+void error_code(error_code_t code)
+{
+    return;
+}
+void set_emergency()
+{
+    return;
+}
+
+
+void setUp()
+{
+    ArduinoFakeReset();
+    pos = {0, 0};
+    speed_left = 0;
+    speed_right = 0;
+    line_offset = 0;
+    line_state = 0x00;
+}
 
 
 void test_maze_stack()

@@ -1,6 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include <Arduino.h>
 
 #define CONF_ITEMS(X) \
     X(float, mm_per_pulse, 0.201451757605416f) \
@@ -32,4 +31,8 @@ typedef struct {
 extern conf_t conf;
 
 void conf_init();
+
+#ifndef UNIT_TEST
+#include <Arduino.h>
 void conf_print(Print *response, conf_t c);
+#endif

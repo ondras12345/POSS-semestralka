@@ -14,6 +14,7 @@ void conf_init()
 }
 
 
+#ifndef UNIT_TEST
 /**
  * Print conf_t in a format that allows it to be imported by pasting the
  * output to the cli (conf command).
@@ -29,3 +30,4 @@ void conf_print(Print *response, conf_t c)
 
     CONF_ITEMS(X_PRINT)
 }
+#endif

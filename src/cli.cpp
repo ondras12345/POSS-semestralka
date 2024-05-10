@@ -12,14 +12,13 @@
 #include "imu.h"
 #include "robot.h"
 #include "conf.h"
-#include "hardware.h"
 #include "turn.h"
 #include "debug.h"
+#include "error.h"
+#include "maze.h"
 
 static Shellminator shell(&Serial);
 static Commander commander;
-
-extern maze_route_t maze_route_current;
 
 
 static void cmnd_encoder(char *args, Stream *response)
@@ -293,15 +292,6 @@ static void cmnd_debug(char *args, Stream *response)
 
 usage:
     response->println(F("usage: debug [name (1|0)]"));
-}
-
-void print_maze_node(maze_route_node_t node, Print *response)
-{
-    response->write(node.crossroad);
-    response->print('\t');
-    response->write(node.direction);
-    response->print('\t');
-    response->println(node.distance_mm);
 }
 
 

@@ -14,21 +14,21 @@
 - [x] `crossroad` debug
 - [x] `s_maze_follow`
 - [x] speed up in straight segments
-- [ ] map
-- [ ] test dead end detection
-
-## TODO implement
-- [ ] imu sometimes measures nonsense
+- [x] imu sometimes measures nonsense
   - There is no magnetic compass on board
   - Gyro is calibrated 500ms after boot. Ensure no movement.
+- [ ] map
+- [ ] dead end detection
+
+## TODO implement
 - [ ] test for backtracking, optimize `map_dir_order`
   - I would need to mock all of these:
-    - encoder distance
-    - crossroad detection
-    - line_follower
-    - turn
-    - Serial / DEBUG
-    - error_code
+    - [x] encoder distance
+    - [x] crossroad detection
+    - [x] line_follower
+    - [x] turn
+    - [x] Serial / DEBUG
+    - [x] error_code
 
 
 ## Notes

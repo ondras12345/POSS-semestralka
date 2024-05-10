@@ -1,12 +1,17 @@
 #include "line_follower.h"
+
+#ifndef UNIT_TEST
 #include <Arduino.h>
 #include <MeRGBLineFollower.h>
-#include "hardware.h"
+#endif
+
+#include "debug.h"
 #include "conf.h"
 #include "motor.h"
-#include "debug.h"
 
+#ifndef UNIT_TEST
 static MeRGBLineFollower RGBLineFollower(PORT_9);
+#endif
 
 static crossroad_t crossroad = cr_0;
 static crossroad_t last_crossroad = cr_0;
@@ -24,6 +29,7 @@ static bool following = false;
 static uint8_t base_speed;
 
 
+#ifndef UNIT_TEST
 void line_follower_init()
 {
     RGBLineFollower.begin();
@@ -31,6 +37,7 @@ void line_follower_init()
     // line_follower_follow() is first called.
     //RGBLineFollower.setKp(1.0);
 }
+#endif
 
 
 void line_follower_loop(unsigned long now)
@@ -52,8 +59,10 @@ void line_follower_loop(unsigned long now)
 
     if (now - prev_millis < 10UL) return;
     prev_millis = now;
+#ifndef UNIT_TEST
     // sam to stejne dela jen kazdych 9 ms
     RGBLineFollower.loop();
+#endif
 
     constexpr uint8_t N=4;
     static uint8_t counters[N] = {0};
@@ -224,6 +233,7 @@ void line_follower_loop(unsigned long now)
 }
 
 
+#ifndef UNIT_TEST
 int16_t line_follower_offset()
 {
     return RGBLineFollower.getPositionOffset();
@@ -236,6 +246,7 @@ uint8_t line_follower_state()
     // LSB je uplne vlevo
     return RGBLineFollower.getPositionState();
 }
+#endif
 
 uint8_t line_follower_state_debounced()
 {
@@ -291,7 +302,9 @@ void line_follower_clear()
 void line_follower_follow(uint8_t speed)
 {
     following = true;
+#ifndef UNIT_TEST
     RGBLineFollower.setKp(conf.line_Kp);
+#endif
     base_speed = speed;
 }
 

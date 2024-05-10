@@ -1,9 +1,10 @@
-#ifndef UNIT_TEST
 #include "encoder.h"
+#include "conf.h"
+
+#ifndef UNIT_TEST
 #include <Arduino.h>
 #include <util/atomic.h>
 #include "hardware.h"
-#include "conf.h"
 
 static volatile uint32_t pulse_left;
 static volatile uint32_t pulse_right;
@@ -68,14 +69,14 @@ encoder_position_t encoder_position()
     return pos;
 }
 
+#endif // UNIT_TEST
+
 
 int32_t encoder_distance_mm(encoder_position_t start, encoder_position_t end)
 {
     // TODO do not use float conf constant?
     return encoder_distance_pulses(start, end) * conf.mm_per_pulse;
 }
-
-#endif // UNIT_TEST
 
 
 int32_t encoder_distance_pulses(encoder_position_t start, encoder_position_t end)

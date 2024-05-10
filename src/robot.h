@@ -9,11 +9,9 @@
     X(stop, 4) \
     X(maze_follow, 5) \
     X(maze_following, 6) \
-    X(maze_following_turning, 7) \
-    X(map_start, 8) \
-    X(map_straight, 9) \
-    X(map_turning, 10) \
-    X(finish, 11)
+    X(map_start, 7) \
+    X(map_mapping, 8) \
+    X(finish, 9)
 
 #define X_ENUM(name, value) s_##name = value,
 typedef enum {

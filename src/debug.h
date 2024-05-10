@@ -14,3 +14,7 @@ extern Print * DEBUG_null;
 #define X_extern(name) extern Print * DEBUG_##name;
 DEBUGGERS(X_extern)
 #undef X_extern
+
+
+#include "maze.h"
+void print_maze_node(maze_route_node_t node, Print *response);

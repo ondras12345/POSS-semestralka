@@ -24,5 +24,3 @@
 
 #define PIN_BUMPER_LEFT 62
 #define PIN_BUMPER_RIGHT 67
-
-bool get_emergency();

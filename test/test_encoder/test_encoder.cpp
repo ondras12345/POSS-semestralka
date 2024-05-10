@@ -1,6 +1,7 @@
 #include <unity.h>
 
 #include "encoder.h"
+#include "conf.cpp"
 #include "encoder.cpp"
 
 

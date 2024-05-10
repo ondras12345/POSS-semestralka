@@ -1,5 +1,6 @@
 #include "motor.h"
 #include "hardware.h"
+#include "error.h"
 #include <Arduino.h>
 
 void motor_init()
