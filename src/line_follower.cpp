@@ -224,7 +224,7 @@ void line_follower_loop(unsigned long now)
         last_crossroad_updated = true;
         last_crossroad = cr_0;
     }
-    else if (last_crossroad != cr_F && prev_crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 80)
+    else if (last_crossroad != cr_F && prev_crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 50)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: F (dist)"));
         last_crossroad_updated = true;

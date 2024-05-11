@@ -8,6 +8,7 @@
     X(maze_follow) \
     X(map)
 
+
 // All of the following Print pointers are guaranteed to not be nullptr.
 extern Print * DEBUG_null;
 

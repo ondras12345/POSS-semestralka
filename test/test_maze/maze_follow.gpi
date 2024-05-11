@@ -1,0 +1,33 @@
+#!/usr/bin/env gnuplot
+
+set terminal gif animate delay 5
+set output 'maze_follow.gif'
+
+MAP_WIDTH=344
+MAP_HEIGHT=263
+DATAFILE='maze_follow.csv'
+
+stats DATAFILE nooutput
+
+set xrange [0:MAP_WIDTH-1]
+set yrange [MAP_HEIGHT-1:0]
+set xtics 20
+set mxtics 2
+set ytics 20
+set mytics 2
+
+set grid xtics mxtics ytics mytics front
+set xlabel "x [px = cm]"
+set ylabel "y [px = cm]"
+
+set key autotitle columnhead
+
+
+do for [i=1:int(STATS_records):10] {
+    plot "maze.data" binary array=344x263 format='%uchar' u 1:2:3 w rgbimage, \
+    DATAFILE every ::(i-1)::(i-1) u 2:3 with points, \
+    DATAFILE every ::(i-1)::(i-1) u (k=$1)
+
+    unset label 1
+    set label 1 sprintf('k=%d', k) front left at 240,230
+}

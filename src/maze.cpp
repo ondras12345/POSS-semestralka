@@ -123,6 +123,12 @@ bool turn_from_direction(crossroad_direction_t crd)
 }
 
 
+void maze_init()
+{
+    maze_route_init(&maze_route_current);
+}
+
+
 void maze_loop(unsigned long now)
 {
     const encoder_position_t pos = encoder_position();
@@ -195,6 +201,7 @@ void maze_loop(unsigned long now)
                 }
             }
         }
+            break;
 
         case ms_following_turning:
             if (!turn_status())
@@ -203,7 +210,7 @@ void maze_loop(unsigned long now)
                 line_follower_follow(conf.base_speed);
                 state = ms_following;
                 line_follower_clear();
-                DEBUG_maze_follow->println(F("[D] finished turning "));
+                DEBUG_maze_follow->println(F("[D] finished turning"));
             }
             break;
 
@@ -312,7 +319,7 @@ void maze_loop(unsigned long now)
                     }
                 }
             }
-        break;
+            break;
 
         case ms_mapping_turning:
             if (!turn_status())

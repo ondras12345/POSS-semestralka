@@ -1,5 +1,6 @@
 #include "debug.h"
 
+
 class NullPrint : public Print {
     public:
         size_t write(uint8_t c)
@@ -13,12 +14,12 @@ class NullPrint : public Print {
         }
 };
 
-static NullPrint null = NullPrint();
 
+static NullPrint null = NullPrint();
 
 Print * DEBUG_null = &null;
 
-#define X_def(name) extern Print * DEBUG_##name = DEBUG_null;
+#define X_def(name) Print * DEBUG_##name = DEBUG_null;
 DEBUGGERS(X_def)
 
 

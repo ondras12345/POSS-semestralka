@@ -98,7 +98,7 @@ void setup()
     pinMode(PIN_BUMPER_RIGHT, INPUT_PULLUP);
 
     conf_init();
-    maze_route_init(&maze_route_current);
+    maze_init();
 
     encoder_init();
     motor_init();
