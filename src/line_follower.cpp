@@ -215,18 +215,21 @@ void line_follower_loop(unsigned long now)
         // dead end
         DEBUG_crossroad->println(F("[D] last crossroad: i (dist)"));
         last_crossroad_updated = true;
+        last_crossroad_position = pos;
         last_crossroad = cr_i;
     }
     if (last_crossroad != cr_0 && prev_crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 100)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: 0 (dist)"));
         last_crossroad_updated = true;
+        last_crossroad_position = pos;
         last_crossroad = cr_0;
     }
     else if (last_crossroad != cr_F && prev_crossroad == cr_T && encoder_distance_mm(prev_T_pos, pos) >= 50)
     {
         DEBUG_crossroad->println(F("[D] last crossroad: F (dist)"));
         last_crossroad_updated = true;
+        last_crossroad_position = pos;
         last_crossroad = cr_F;
     }
 }

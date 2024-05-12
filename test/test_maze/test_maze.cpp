@@ -12,7 +12,7 @@
 
 
 #include "debug.cpp"
-char log_buf[200];
+char log_buf[1024];
 size_t log_i;
 class TestPrint : public Print {
     public:
@@ -478,11 +478,56 @@ void test_maze_map()
         TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");
         if (k >= 10 && !maze_mapping())
         {
+            for (uint8_t i = 0; i < maze_route_current.top; i++)
+            {
+                Serial.print(F("maze_push "));
+                print_maze_node(maze_route_current.stack[i], &Serial);
+            }
+            fprintf(fo, "# %s\n", log_buf);
             fprintf(fo, "# N_turns=%zu\n", N_turns);
             // jsme v cili?
             char buf[80];
             snprintf(buf, sizeof buf, "not at finish x=%u y=%u", map_pos.x, map_pos.y);
             TEST_ASSERT_TRUE_MESSAGE(map_lines_finish(map_pos), buf);
+
+            TEST_ASSERT_EQUAL_UINT(12, maze_route_current.top);
+            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[0].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[0].direction);
+            // TODO assert distance_mm
+            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[1].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[1].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[2].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[2].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_G, maze_route_current.stack[3].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[3].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_7, maze_route_current.stack[4].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[4].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_G, maze_route_current.stack[5].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[5].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_E, maze_route_current.stack[6].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[6].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[7].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[7].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[8].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[8].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[9].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[9].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[10].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[10].direction);
+            //
+            TEST_ASSERT_EQUAL_CHAR(cr_F, maze_route_current.stack[11].crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[11].direction);
+
+            // TODO distances are wrong
             return;
         }
     }
@@ -503,8 +548,8 @@ int runUnityTests(void)
     RUN_TEST(test_maze_stack);
     RUN_TEST(test_maze_map_dir_next);
     RUN_TEST(test_maze_crd_rotate);
-    RUN_TEST(test_maze_follow);
     RUN_TEST(test_maze_map);
+    RUN_TEST(test_maze_follow);
 
     fprintf(stderr, "gnuplot result: %d\n", system("./maze_follow.gpi"));
 
