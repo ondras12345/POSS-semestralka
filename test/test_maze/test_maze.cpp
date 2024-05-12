@@ -86,6 +86,7 @@ pos2_t pos2_vec2_add(pos2_t p, vec2_t v)
 pos2_t map_pos;
 pos2_t start_pos;
 vec2_t orientation_vec;
+size_t N_turns;
 
 // mocks
 encoder_position_t pos;
@@ -119,6 +120,7 @@ void turn_turn_relative(float angle, bool expect_line)
     tp.print(angle);
     tp.print(' ');
     tp.println(expect_line);
+    N_turns++;
 
     // otoceni meni i pozici na mape
     map_pos = pos2_vec2_add(map_pos, vec2_scale(orientation_vec, -2));
@@ -195,6 +197,7 @@ void setUp()
     line_offset = 0;
     line_state = 0x00;
     emergency = false;
+    N_turns = 0;
 
     FILE * fm = fopen("maze.data", "rb");
     TEST_ASSERT_NOT_NULL(fm);
@@ -451,7 +454,7 @@ void test_maze_map()
     maze_init();
 
     // limit max number of iterations to prevent endless loop in case of bug
-    for (size_t k = 0; k < 20000U; k++)
+    for (size_t k = 0; k < 40000U; k++)
     {
         tp.print("k=");
         tp.println(k);
@@ -475,6 +478,7 @@ void test_maze_map()
         TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");
         if (k >= 10 && !maze_mapping())
         {
+            fprintf(fo, "# N_turns=%zu\n", N_turns);
             // jsme v cili?
             char buf[80];
             snprintf(buf, sizeof buf, "not at finish x=%u y=%u", map_pos.x, map_pos.y);

@@ -66,9 +66,8 @@ static uint8_t route_follow_index;
 static bool map_backtracking;
 static encoder_position_t map_prev_cr_pos;
 static const crossroad_direction_t map_dir_order[] = {
-    // TODO optimize
-    crd_left,
     crd_right,
+    crd_left,
     crd_straight,
 };
 

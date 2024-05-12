@@ -91,3 +91,33 @@ L11708 R12818
 
 2.47m / 4s = .61 m/s
 ```
+
+
+### Mapping optimization
+```
+k	map_pos_x	map_pos_y	orientation_x	orientation_y	line_state	crossroad	last_crossroad	encoder_pos_left	encoder_pos_right	speed_left	speed_right
+
+crd_left, crd_right, crd_straight
+25585	321	101	1	0	0x0	T	F	74116	129668	0	0
+# N_turns=51
+
+crd_left, crd_straight, crd_right
+28925	321	101	1	0	0x0	T	F	67564	162796	0	0
+# N_turns=60
+
+crd_right, crd_left, crd_straight ******************
+24365	321	101	1	0	0x0	T	F	77188	116868	0	0
+# N_turns=49
+
+crd_right, crd_straight, crd_left
+28905	321	101	1	0	0x0	T	F	115244	115244	0	0
+# N_turns=54
+
+crd_straight, crd_left, crd_right
+33465	321	101	1	0	0x0	T	F	101652	165140	0	0
+# N_turns=53
+
+crd_straight, crd_right, crd_left
+32245	321	101	1	0	0x0	T	F	104724	152340	0	0
+# N_turns=51
+```
