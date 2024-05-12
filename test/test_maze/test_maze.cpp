@@ -314,6 +314,16 @@ void test_maze_map_dir_next()
 }
 
 
+void test_maze_crd_rotate()
+{
+    // crossroad_direction_t crossroad_direction_rotate(crossroad_direction_t rotate_me, crossroad_direction_t from)
+    TEST_ASSERT_EQUAL_CHAR(crd_straight, crossroad_direction_rotate(crd_right, crd_left));
+    TEST_ASSERT_EQUAL_CHAR(crd_right, crossroad_direction_rotate(crd_left, crd_straight));
+    TEST_ASSERT_EQUAL_CHAR(crd_left, crossroad_direction_rotate(crd_right, crd_straight));
+    TEST_ASSERT_EQUAL_CHAR(crd_left, crossroad_direction_rotate(crd_back, crd_right));
+}
+
+
 void fo_header()
 {
     fprintf(fo, "k\tmap_pos_x\tmap_pos_y\torientation_x\torientation_y\tline_state\tcrossroad\tlast_crossroad\tencoder_pos_left\tencoder_pos_right\tspeed_left\tspeed_right\n");
@@ -488,6 +498,7 @@ int runUnityTests(void)
     RUN_TEST(test_utils);
     RUN_TEST(test_maze_stack);
     RUN_TEST(test_maze_map_dir_next);
+    RUN_TEST(test_maze_crd_rotate);
     RUN_TEST(test_maze_follow);
     RUN_TEST(test_maze_map);
 

@@ -86,7 +86,7 @@ crossroad_direction_t crossroad_direction_rotate(crossroad_direction_t rotate_me
         case crd_back:
             if (from == crd_left) return crd_right;
             if (from == crd_straight) return crd_straight;
-            if (from == crd_right) return crd_straight;
+            if (from == crd_right) return crd_left;
 
         case crd_invalid:
             break;

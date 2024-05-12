@@ -243,12 +243,17 @@ void maze_loop(unsigned long now)
                         set_emergency();
                         break;
                     }
+                    else
+                    {
+                        DEBUG_map->println(F("[D] expected crossroad (backtracking)"));
+                    }
 
                     crossroad_direction_t prev_dir = node.direction;
                     crossroad_direction_t next_dir = map_dir_next(node.crossroad, prev_dir);
                     if (next_dir == crd_invalid)
                     {
                         // all directions have been tried, return to previous crossroad
+                        DEBUG_map->println(F("[D] next_dir invalid"));
                         crossroad_direction_t next_dir_rotated = crossroad_direction_rotate(crd_back, prev_dir);
                         // No maze_route_push, we are removing this crossroad from
                         // the stack.
@@ -329,7 +334,7 @@ void maze_loop(unsigned long now)
                 line_follower_follow(conf.map_speed);
                 state = ms_mapping;
                 line_follower_clear();
-                DEBUG_map->println(F("[D] finished turning "));
+                DEBUG_map->println(F("[D] finished turning"));
             }
             break;
     }
