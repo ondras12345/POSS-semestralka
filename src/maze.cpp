@@ -231,6 +231,7 @@ void maze_loop(unsigned long now)
                     set_emergency();
                     break;
                 }
+                encoder_position_t lpos = line_follower_last_crossroad_position();
 
                 if (map_backtracking)
                 {
@@ -299,7 +300,6 @@ void maze_loop(unsigned long now)
                         DEBUG_map->println(F("[D] finish"));
                         maze_route_node_t node;
                         node.crossroad = cr_F;
-                        encoder_position_t lpos = line_follower_last_crossroad_position();
                         node.distance_mm = encoder_distance_mm(map_prev_cr_pos, lpos);
                         node.direction = crd_straight;
                         maze_route_push(&maze_route_current, node);
@@ -309,9 +309,7 @@ void maze_loop(unsigned long now)
                     // new crossroad that we haven't seen yet
                     maze_route_node_t node;
                     node.crossroad = cr;
-                    encoder_position_t lpos = line_follower_last_crossroad_position();
                     node.distance_mm = encoder_distance_mm(map_prev_cr_pos, lpos);
-                    map_prev_cr_pos = lpos;
                     node.direction = map_dir_next(cr);
                     if (node.direction == crd_invalid)
                     {
@@ -328,6 +326,7 @@ void maze_loop(unsigned long now)
                         state = ms_mapping_turning;
                     }
                 }
+                map_prev_cr_pos = lpos;
             }
             break;
 

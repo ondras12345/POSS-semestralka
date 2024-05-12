@@ -356,6 +356,10 @@ void step_mocks(size_t k)
             TEST_ASSERT_GREATER_THAN_UINT(0, map_pos.y);
             TEST_ASSERT_LESS_THAN_UINT(MAP_WIDTH, map_pos.x);
             TEST_ASSERT_LESS_THAN_UINT(MAP_HEIGHT, map_pos.y);
+            // correction
+            uint32_t dist_pulses = (10 / conf.mm_per_pulse) - 10*(uint32_t)(1/conf.mm_per_pulse);
+            pos.left += dist_pulses;
+            pos.right += dist_pulses;
         }
         // encoder position
         // map pixels are 10x10mm
@@ -491,43 +495,65 @@ void test_maze_map()
             TEST_ASSERT_TRUE_MESSAGE(map_lines_finish(map_pos), buf);
 
             TEST_ASSERT_EQUAL_UINT(12, maze_route_current.top);
-            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[0].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[0].direction);
-            // TODO assert distance_mm
-            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[1].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[1].direction);
+            maze_route_node_t node = maze_route_current.stack[0];
+            TEST_ASSERT_EQUAL_CHAR(cr_X, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 100, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[2].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[2].direction);
+            node = maze_route_current.stack[1];
+            TEST_ASSERT_EQUAL_CHAR(cr_3, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_G, maze_route_current.stack[3].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[3].direction);
+            node = maze_route_current.stack[2];
+            TEST_ASSERT_EQUAL_CHAR(cr_X, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_7, maze_route_current.stack[4].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[4].direction);
+            node = maze_route_current.stack[3];
+            TEST_ASSERT_EQUAL_CHAR(cr_G, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_G, maze_route_current.stack[5].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[5].direction);
+            node = maze_route_current.stack[4];
+            TEST_ASSERT_EQUAL_CHAR(cr_7, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_E, maze_route_current.stack[6].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[6].direction);
+            node = maze_route_current.stack[5];
+            TEST_ASSERT_EQUAL_CHAR(cr_G, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 600, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[7].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[7].direction);
+            node = maze_route_current.stack[6];
+            TEST_ASSERT_EQUAL_CHAR(cr_E, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 1200, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[8].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[8].direction);
+            node = maze_route_current.stack[7];
+            TEST_ASSERT_EQUAL_CHAR(cr_X, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 1200, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_3, maze_route_current.stack[9].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_left, maze_route_current.stack[9].direction);
+            node = maze_route_current.stack[8];
+            TEST_ASSERT_EQUAL_CHAR(cr_3, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_X, maze_route_current.stack[10].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_right, maze_route_current.stack[10].direction);
+            node = maze_route_current.stack[9];
+            TEST_ASSERT_EQUAL_CHAR(cr_3, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_left, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 600, node.distance_mm);
             //
-            TEST_ASSERT_EQUAL_CHAR(cr_F, maze_route_current.stack[11].crossroad);
-            TEST_ASSERT_EQUAL_CHAR(crd_straight, maze_route_current.stack[11].direction);
-
-            // TODO distances are wrong
+            node = maze_route_current.stack[10];
+            TEST_ASSERT_EQUAL_CHAR(cr_X, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_right, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 1200, node.distance_mm);
+            //
+            node = maze_route_current.stack[11];
+            TEST_ASSERT_EQUAL_CHAR(cr_F, node.crossroad);
+            TEST_ASSERT_EQUAL_CHAR(crd_straight, node.direction);
+            TEST_ASSERT_UINT16_WITHIN(50, 300, node.distance_mm);
             return;
         }
     }
