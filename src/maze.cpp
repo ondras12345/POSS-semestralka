@@ -302,7 +302,6 @@ void maze_loop(unsigned long now)
                     }
 
                     // new crossroad that we haven't seen yet
-                    line_follower_stop();
                     maze_route_node_t node;
                     node.crossroad = cr;
                     encoder_position_t lpos = line_follower_last_crossroad_position();
