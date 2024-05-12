@@ -4,7 +4,7 @@
 /**
  * Map data file specification:
  * - line following / crossroad detection is done based off of blue channel
- *   (blue=0 line, blue=255 no line)
+ *   (blue==0 line, blue!=0 no line)
  * - red and green channels are used for extra info
  * - start point should have red=255, green=0
  * - finish area should have red=0, green=255
