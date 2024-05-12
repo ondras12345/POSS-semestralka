@@ -17,11 +17,7 @@
 - [x] imu sometimes measures nonsense
   - There is no magnetic compass on board
   - Gyro is calibrated 500ms after boot. Ensure no movement.
-- [ ] map
-- [ ] dead end detection
-
-## TODO implement
-- [ ] test for backtracking, optimize `map_dir_order`
+- [x] test for backtracking, optimize `map_dir_order`
   - I would need to mock all of these:
     - [x] encoder distance
     - [x] crossroad detection
@@ -29,6 +25,11 @@
     - [x] turn
     - [x] Serial / DEBUG
     - [x] error_code
+- [ ] map
+- [ ] dead end detection
+
+## TODO implement
+- [ ] do not map first cross ??
 
 
 ## Notes

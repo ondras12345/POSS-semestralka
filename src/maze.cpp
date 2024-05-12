@@ -364,6 +364,7 @@ bool maze_following()
 
 void maze_map()
 {
+    // TODO do not map first cross ??
     map_backtracking = false;
     maze_route_init(&maze_route_current);  // clear route
     map_prev_cr_pos = encoder_position();
