@@ -306,6 +306,14 @@ void test_maze_stack()
 }
 
 
+void test_maze_map_dir_next()
+{
+    TEST_ASSERT_EQUAL_CHAR(map_dir_order[0], map_dir_next(cr_X));
+    TEST_ASSERT_EQUAL_CHAR(map_dir_order[1], map_dir_next(cr_X, map_dir_order[0]));
+    TEST_ASSERT_EQUAL_CHAR(map_dir_order[2], map_dir_next(cr_X, map_dir_order[1]));
+}
+
+
 void fo_header()
 {
     fprintf(fo, "k\tmap_pos_x\tmap_pos_y\torientation_x\torientation_y\tline_state\tcrossroad\tlast_crossroad\tencoder_pos_left\tencoder_pos_right\tspeed_left\tspeed_right\n");
@@ -479,6 +487,7 @@ int runUnityTests(void)
     UNITY_BEGIN();
     RUN_TEST(test_utils);
     RUN_TEST(test_maze_stack);
+    RUN_TEST(test_maze_map_dir_next);
     RUN_TEST(test_maze_follow);
     RUN_TEST(test_maze_map);
 

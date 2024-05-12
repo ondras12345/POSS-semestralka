@@ -80,17 +80,16 @@ static const crossroad_direction_t map_dir_order[] = {
  */
 crossroad_direction_t map_dir_next(crossroad_t cr, crossroad_direction_t crd=crd_invalid)
 {
-    if (crd == crd_invalid) crd = map_dir_order[0];
     bool found_start = false;
+    if (crd == crd_invalid) found_start = true;
     for (uint8_t i = 0; i < sizeof(map_dir_order)/sizeof(map_dir_order[0]); i++)
     {
         crossroad_direction_t crd_i = map_dir_order[i];
-        if (crd_i == crd) found_start = true;
-        if (!found_start) continue;
-        if (crossroad_direction_valid(cr, crd_i))
+        if (found_start && crossroad_direction_valid(cr, crd_i))
         {
             return crd_i;
         }
+        if (crd_i == crd) found_start = true;
     }
     // no solution found
     return crd_invalid;
@@ -262,6 +261,7 @@ void maze_loop(unsigned long now)
                     {
                         // try next direction
                         map_backtracking = false;
+                        DEBUG_map->println(F("map_backtracking=false"));
                         node.direction = next_dir;
                         maze_route_push(&maze_route_current, node);
                         crossroad_direction_t next_dir_rotated = crossroad_direction_rotate(next_dir, prev_dir);
@@ -279,10 +279,11 @@ void maze_loop(unsigned long now)
                     {
                         // dead end, turn 180 degrees
                         map_backtracking = true;
+                        DEBUG_map->println(F("map_backtracking=true"));
                         line_follower_stop();
                         turn_turn_relative(180, true);
                         state = ms_mapping_turning;
-                        DEBUG_map->println("[D] dead end, turning 180");
+                        DEBUG_map->println(F("[D] dead end, turning 180"));
                         break;
                     }
 
@@ -291,7 +292,7 @@ void maze_loop(unsigned long now)
                         line_follower_stop();
                         // finish
                         state = ms_idle;
-                        DEBUG_map->println("[D] finish");
+                        DEBUG_map->println(F("[D] finish"));
                         break;
                     }
 
