@@ -431,6 +431,7 @@ void test_maze_follow()
         line_follower_loop(now);
         maze_loop(now);
 
+        TEST_ASSERT_NULL(strstr(log_buf, "unexpected"));
         fo_line(k);
 
         TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");
@@ -477,6 +478,7 @@ void test_maze_map()
         line_follower_loop(now);
         maze_loop(now);
 
+        TEST_ASSERT_NULL(strstr(log_buf, "unexpected"));
         fo_line(k);
 
         TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");

@@ -238,7 +238,7 @@ void maze_loop(unsigned long now)
                     maze_route_node_t node = maze_route_pop(&maze_route_current);
                     if (crossroad_rotate(node.crossroad, node.direction) != cr)
                     {
-                        Serial.println(F("[E] e_unexpected_crossroad"));
+                        Serial.println(F("[E] unexpected crossroad"));
                         error_code(e_unexpected_crossroad);
                         set_emergency();
                         break;
