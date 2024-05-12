@@ -180,8 +180,11 @@ bool map_lines_finish(pos2_t pos)
 }
 
 
+FILE * fo;
+
 void setUp()
 {
+    fo = NULL;
     log_i = 0;
     log_buf[0] = '\0';
 #define X_TestPrint(name) DEBUG_##name = &tp;
@@ -217,10 +220,30 @@ void setUp()
     TEST_ASSERT_TRUE_MESSAGE(fgetc(fm) == EOF, "did not read all of fm");
     fclose(fm);
 
+    //printf("start_pos: %u,%u\n", start_pos.x, start_pos.y);
+    //FILE * fo = fopen("maze_dump.txt", "w");
+    //TEST_ASSERT_NOT_NULL(fo);
+    //// dump map
+    //for (size_t y = 0; y < MAP_HEIGHT; y++)
+    //{
+    //    for (size_t x = 0; x < MAP_WIDTH; x++)
+    //    {
+    //        putc(map_lines_get({x, y}) ? ' ' : '+', fo);
+    //    }
+    //    putc('\n', fo);
+    //}
+    //fclose(fo);
+
     map_pos = start_pos;
 
     orientation_vec = {1, 0}; // ->
     conf_init();
+}
+
+
+void tearDown()
+{
+    if (fo != NULL) fclose(fo);
 }
 
 
@@ -283,27 +306,71 @@ void test_maze_stack()
 }
 
 
+void fo_header()
+{
+    fprintf(fo, "k\tmap_pos_x\tmap_pos_y\torientation_x\torientation_y\tline_state\tcrossroad\tlast_crossroad\tencoder_pos_left\tencoder_pos_right\tspeed_left\tspeed_right\n");
+}
+
+
+void fo_line(size_t k)
+{
+    fprintf(fo, "# %s\n", log_buf);
+    log_i = 0;
+    log_buf[0] = '\0';
+    fprintf(
+        fo,
+        "%zu\t%u\t%u\t%i\t%i\t0x%hhx\t%c\t%c\t%u\t%u\t%d\t%d\n",
+        k, map_pos.x, map_pos.y, orientation_vec.x, orientation_vec.y, line_state, line_follower_crossroad(), line_follower_last_crossroad(), pos.left, pos.right, speed_left, speed_right
+    );
+}
+
+void step_mocks(size_t k)
+{
+    if (speed_right > 0 && speed_left > 0)
+    {
+        if (k % 10 == 0)
+        {
+            map_pos = pos2_vec2_add(map_pos, orientation_vec);
+            TEST_ASSERT_GREATER_THAN_UINT(0, map_pos.x);
+            TEST_ASSERT_GREATER_THAN_UINT(0, map_pos.y);
+            TEST_ASSERT_LESS_THAN_UINT(MAP_WIDTH, map_pos.x);
+            TEST_ASSERT_LESS_THAN_UINT(MAP_HEIGHT, map_pos.y);
+        }
+        // encoder position
+        // map pixels are 10x10mm
+        // this is executed 10x per pixel
+        uint32_t dist_pulses = 10/10 / conf.mm_per_pulse;
+        pos.left += dist_pulses;
+        pos.right += dist_pulses;
+    }
+    else if (speed_right < 0 && speed_left < 0)
+    {
+        TEST_FAIL_MESSAGE("reverse movement");
+    }
+    else if (speed_right == 0 && speed_left == 0)
+    {
+        // that's fine
+    }
+    else
+    {
+        TEST_FAIL_MESSAGE("unexpected turn");
+    }
+
+    line_state = (
+        (map_lines_get(map_pos) ? 0b0110 : 0)
+        | (map_lines_get(pos2_vec2_add(map_pos, vec2_rotate90(orientation_vec, true))) ? 0b1000 : 0)
+        | (map_lines_get(pos2_vec2_add(map_pos, vec2_rotate90(orientation_vec, false))) ? 0b0001 : 0)
+    );
+}
+
+
 void test_maze_follow()
 {
     TEST_ASSERT_FALSE(map_lines_finish(map_pos));
 
-    //printf("start_pos: %u,%u\n", start_pos.x, start_pos.y);
-    //FILE * fo = fopen("maze_dump.txt", "w");
-    //TEST_ASSERT_NOT_NULL(fo);
-    //// dump map
-    //for (size_t y = 0; y < MAP_HEIGHT; y++)
-    //{
-    //    for (size_t x = 0; x < MAP_WIDTH; x++)
-    //    {
-    //        putc(map_lines_get({x, y}) ? ' ' : '+', fo);
-    //    }
-    //    putc('\n', fo);
-    //}
-    //fclose(fo);
-
-    FILE * fo = fopen("maze_follow.csv", "w");
-    fprintf(fo, "k\tmap_pos_x\tmap_pos_y\torientation_x\torientation_y\tline_state\tcrossroad\tlast_crossroad\tencoder_pos_left\tencoder_pos_right\tspeed_left\tspeed_right\n");
+    fo = fopen("maze_follow.csv", "w");
     TEST_ASSERT_NOT_NULL(fo);
+    fo_header();
 
     maze_init();
     maze_route_push(&maze_route_current, {cr_X, crd_straight, 100});
@@ -318,49 +385,14 @@ void test_maze_follow()
     maze_route_push(&maze_route_current, {cr_3, crd_left, 600});
     maze_route_push(&maze_route_current, {cr_X, crd_right, 1200});
     maze_route_push(&maze_route_current, {cr_F, crd_straight, 300});
-    maze_follow();
 
     // limit max number of iterations to prevent endless loop in case of bug
     for (size_t k = 0; k < 10000U; k++)
     {
         tp.print("k=");
         tp.println(k);
-        // step mocks
-        if (speed_right > 0 && speed_left > 0)
-        {
-            if (k % 10 == 0)
-            {
-                map_pos = pos2_vec2_add(map_pos, orientation_vec);
-                TEST_ASSERT_GREATER_THAN_UINT(0, map_pos.x);
-                TEST_ASSERT_GREATER_THAN_UINT(0, map_pos.y);
-                TEST_ASSERT_LESS_THAN_UINT(MAP_WIDTH, map_pos.x);
-                TEST_ASSERT_LESS_THAN_UINT(MAP_HEIGHT, map_pos.y);
-            }
-            // encoder position
-            // map pixels are 10x10mm
-            // this is executed 10x per pixel
-            uint32_t dist_pulses = 10/10 / conf.mm_per_pulse;
-            pos.left += dist_pulses;
-            pos.right += dist_pulses;
-        }
-        else if (speed_right < 0 && speed_left < 0)
-        {
-            TEST_FAIL_MESSAGE("reverse movement");
-        }
-        else if (speed_right == 0 && speed_left == 0)
-        {
-            // that's fine
-        }
-        else
-        {
-            TEST_FAIL_MESSAGE("unexpected turn");
-        }
 
-        line_state = (
-            (map_lines_get(map_pos) ? 0b0110 : 0)
-            | (map_lines_get(pos2_vec2_add(map_pos, vec2_rotate90(orientation_vec, true))) ? 0b1000 : 0)
-            | (map_lines_get(pos2_vec2_add(map_pos, vec2_rotate90(orientation_vec, false))) ? 0b0001 : 0)
-        );
+        step_mocks(k);
 
         if ((line_state & 0b0110) != 0b0000)
         {
@@ -368,19 +400,17 @@ void test_maze_follow()
             //TEST_FAIL_MESSAGE("left line");
         }
 
+        if (k == 10) maze_follow();  // wait for crossroad to stabilize before starting
+
         unsigned long now = k * 10UL;
         line_follower_loop(now);
         maze_loop(now);
 
-        fprintf(fo, "# %s\n", log_buf);
-        log_i = 0;
-        log_buf[0] = '\0';
-        fprintf(fo, "%zu\t%u\t%u\t%i\t%i\t0x%hhx\t%c\t%c\t%u\t%u\t%d\t%d\n", k, map_pos.x, map_pos.y, orientation_vec.x, orientation_vec.y, line_state, line_follower_crossroad(), line_follower_last_crossroad(), pos.left, pos.right, speed_left, speed_right);
+        fo_line(k);
 
         TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");
-        if (!maze_following())
+        if (k >= 10 && !maze_following())
         {
-            fclose(fo);
             // jsme v cili?
             char buf[80];
             snprintf(buf, sizeof buf, "not at finish x=%u y=%u", map_pos.x, map_pos.y);
@@ -388,7 +418,52 @@ void test_maze_follow()
             return;
         }
     }
-    fclose(fo);
+    TEST_FAIL_MESSAGE("too many iterations");
+}
+
+
+void test_maze_map()
+{
+    TEST_ASSERT_FALSE(map_lines_finish(map_pos));
+
+    fo = fopen("maze_map.csv", "w");
+    TEST_ASSERT_NOT_NULL(fo);
+    fo_header();
+
+    maze_init();
+
+    // limit max number of iterations to prevent endless loop in case of bug
+    for (size_t k = 0; k < 20000U; k++)
+    {
+        tp.print("k=");
+        tp.println(k);
+
+        step_mocks(k);
+
+        if ((line_state & 0b0110) != 0b0000)
+        {
+            // TODO make this less sensitive
+            //TEST_FAIL_MESSAGE("left line");
+        }
+
+        if (k == 10) maze_map();  // wait for crossroad to stabilize before starting
+
+        unsigned long now = k * 10UL;
+        line_follower_loop(now);
+        maze_loop(now);
+
+        fo_line(k);
+
+        TEST_ASSERT_FALSE_MESSAGE(emergency, "emergency mode");
+        if (k >= 10 && !maze_mapping())
+        {
+            // jsme v cili?
+            char buf[80];
+            snprintf(buf, sizeof buf, "not at finish x=%u y=%u", map_pos.x, map_pos.y);
+            TEST_ASSERT_TRUE_MESSAGE(map_lines_finish(map_pos), buf);
+            return;
+        }
+    }
     TEST_FAIL_MESSAGE("too many iterations");
 }
 
@@ -405,6 +480,7 @@ int runUnityTests(void)
     RUN_TEST(test_utils);
     RUN_TEST(test_maze_stack);
     RUN_TEST(test_maze_follow);
+    RUN_TEST(test_maze_map);
 
     fprintf(stderr, "gnuplot result: %d\n", system("./maze_follow.gpi"));
 
