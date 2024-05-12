@@ -27,10 +27,12 @@ unset key
 do for [i=1:int(STATS_records):10] {
     plot "maze.data" binary array=344x263 format='%uchar' u 1:2:3 w rgbimage, \
     DATAFILE every ::(i-1)::(i-1) u 2:3 with points, \
-    DATAFILE every ::(i-1)::(i-1) u (k=$1)
+    DATAFILE every ::(i-1)::(i-1) u (k=$1), \
+    DATAFILE every ::(i-1)::(i-1) u (L=$11), \
+    DATAFILE every ::(i-1)::(i-1) u (R=$12), \
 
     unset label 1
-    set label 1 sprintf('k=%d', k) front left at 240,230
+    set label 1 sprintf("k=%d\nL=%d\nR=%d", k, L, R) front left at 240,230
 }
 
 
