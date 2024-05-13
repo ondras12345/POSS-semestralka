@@ -297,6 +297,7 @@ void line_follower_clear()
     DEBUG_crossroad->println(F("[D] line_follower_clear"));
     last_crossroad_updated = false;
     prev_crossroad_cp = cr_I;
+    prev_0_pos = encoder_position();  // do not detect cr_i right after turning
     handled = true;
 }
 
