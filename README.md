@@ -25,8 +25,9 @@
     - [x] turn
     - [x] Serial / DEBUG
     - [x] error_code
-- [ ] map
-- [ ] dead end detection
+- [x] map
+- [x] dead end detection
+- [x] set new turn target & tolerance
 
 ## TODO implement
 - [ ] do not map first cross ??
