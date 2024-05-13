@@ -210,7 +210,7 @@ void line_follower_loop(unsigned long now)
         }
     }
 
-    if (last_crossroad != cr_i && last_crossroad != cr_0 && prev_crossroad_cp == cr_I && crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= 40)
+    if (last_crossroad != cr_i && last_crossroad != cr_0 && prev_crossroad_cp == cr_I && crossroad == cr_0 && encoder_distance_mm(prev_0_pos, pos) >= conf.dead_end_dist)
     {
         // dead end
         DEBUG_crossroad->println(F("[D] last crossroad: i (dist)"));
