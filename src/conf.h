@@ -5,7 +5,7 @@
     X(float, mm_per_pulse, 0.201451757605416f) \
     /* TODO set speeds */ \
     X(uint8_t, base_speed, 50) \
-    X(uint8_t, fast_speed, 150) \
+    X(uint8_t, fast_speed, 180) \
     X(uint8_t, map_speed, 60) \
     X(uint8_t, fast_offset_mm, 80) \
     /* line_Kp must be between 0 and 1.0 */ \
