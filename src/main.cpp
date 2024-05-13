@@ -154,7 +154,7 @@ void loop()
             line_follower_stop();
             if (now - prev_millis >= 500)
             {
-                Serial.println(F("emergency, waiting for left bumper"));
+                Serial.println(F("emergency, left bumper to start mapping, right to start following"));
                 prev_millis = now;
             }
             if (digitalRead(PIN_BUMPER_LEFT) == LOW)
