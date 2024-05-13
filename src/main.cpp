@@ -172,6 +172,16 @@ void loop()
             break;
 
         case s_idle:
+            if (digitalRead(PIN_BUMPER_LEFT) == LOW)
+            {
+                error_code(e_OK);
+                robot_state = s_map_start;
+            }
+            if (digitalRead(PIN_BUMPER_RIGHT) == LOW)
+            {
+                error_code(e_OK);
+                robot_state = s_maze_follow;
+            }
             break;
 
         case s_line_follow:
