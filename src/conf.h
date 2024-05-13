@@ -19,7 +19,7 @@
     /* doporucuje se 0.5*Ti (PI) nebo sqrt(Ti*Td) (PID) */ \
     X(float, turn_Tt, 15.0) \
     X(uint8_t, turn_target, 70) \
-    X(uint8_t, turn_line_tolerance, 20) \
+    X(uint8_t, turn_line_tolerance, 30) \
     X(uint8_t, line_debounce, 3) /* *10ms */
 
 #define X_STRUCT(type, name, default) type name;

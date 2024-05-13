@@ -37,7 +37,7 @@ void turn_loop(unsigned long now)
     motor_move_lin(u, -u);
 
     float e = PID_angle_wrap(y - target);
-    if (expect_line && conf.turn_line_tolerance > e  && e > -conf.turn_line_tolerance)
+    if (expect_line && conf.turn_line_tolerance > e && e > -conf.turn_line_tolerance)
     {
         uint16_t off = abs(line_follower_offset());
         if (off < line_min)
@@ -47,7 +47,7 @@ void turn_loop(unsigned long now)
         }
     }
 
-    if (abs(e) < 2.5 && abs(u) < 5)
+    if (abs(e) < 3.0 && abs(u) < 5)
     {
         turning = false;
         motor_move_lin(0, 0);
