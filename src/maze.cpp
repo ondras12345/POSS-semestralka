@@ -63,6 +63,7 @@ static state_t state;
 maze_route_t maze_route_current;
 static maze_route_t route_follow_route;
 static uint8_t route_follow_index;
+static encoder_position_t route_follow_prev_cr_pos;
 static bool map_backtracking;
 static encoder_position_t map_prev_cr_pos;
 static const crossroad_direction_t map_dir_order[] = {
@@ -147,8 +148,9 @@ void maze_loop(unsigned long now)
             }
 
             maze_route_node_t node = route_follow_route.stack[route_follow_index];
+            encoder_position_t lpos = line_follower_last_crossroad_position();
 
-            int32_t dist = encoder_distance_mm(line_follower_last_crossroad_position(), pos);
+            int32_t dist = encoder_distance_mm(lpos, pos);
             line_follower_follow(
                 ((dist >= conf.fast_offset_mm || route_follow_route.stack[route_follow_index-1].direction == crd_straight) &&
                  (dist <= node.distance_mm - conf.fast_offset_mm || node.direction == crd_straight)
@@ -166,6 +168,12 @@ void maze_loop(unsigned long now)
                     Serial.println(F("[E] cr_0"));
                     error_code(e_cr_0);
                     set_emergency();
+                    break;
+                }
+
+                if (encoder_distance_mm(route_follow_prev_cr_pos, lpos) <= conf.min_cr_dist)
+                {
+                    Serial.println(F("[W] crossroad detected too soon, ignored"));
                     break;
                 }
 
@@ -197,6 +205,8 @@ void maze_loop(unsigned long now)
                     Serial.println();
                     error_code(e_unexpected_crossroad);
                 }
+
+                route_follow_prev_cr_pos = lpos;
             }
         }
             break;
@@ -232,6 +242,11 @@ void maze_loop(unsigned long now)
                     break;
                 }
                 encoder_position_t lpos = line_follower_last_crossroad_position();
+                if (encoder_distance_mm(map_prev_cr_pos, lpos) <= conf.min_cr_dist)
+                {
+                    Serial.println(F("[W] crossroad detected too soon, ignored"));
+                    break;
+                }
 
                 if (map_backtracking)
                 {
