@@ -35,13 +35,12 @@ void turn_loop(unsigned long now)
     float y = imu_angle_Z();
     int16_t u = (int16_t)PID_angle_loop(&pid, y, target);
     motor_move_lin(u, -u);
-    // TODO keep encoder diff sum = 0?
 
     float e = PID_angle_wrap(y - target);
-    if (expect_line && e < 0 && e > -conf.turn_tolerance)
+    if (expect_line && conf.turn_line_tolerance > e  && e > -conf.turn_line_tolerance)
     {
-        int16_t off = line_follower_offset();
-        if (abs(off) < line_min)
+        uint16_t off = abs(line_follower_offset());
+        if (off < line_min)
         {
             line_min = off;
             target = y;
@@ -67,7 +66,7 @@ void turn_turn_relative(float angle, bool p_expect_line)
     float y = imu_angle_Z();
     target = PID_angle_wrap(y + angle);
     expect_line = p_expect_line;
-    line_min = conf.line_umax;
+    line_min = conf.line_umax;  // line_Kp is less than 1 --> this is fine
 
     pid.Kp = conf.turn_Kp;
     pid.Ki = conf.turn_Ki;
