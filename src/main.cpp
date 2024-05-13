@@ -195,7 +195,7 @@ void loop()
             break;
 
         case s_maze_follow:
-            if (maze_route_current.top == 0)
+            if (maze_route_current.top == 0 || line_follower_crossroad() == cr_0)
             {
                 // if this was triggered by pressing right bumper in emergency
                 // mode and there is no route, go to idle state
