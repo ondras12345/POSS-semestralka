@@ -9,6 +9,7 @@ int16_t line_follower_offset();
 uint8_t line_follower_state();
 uint8_t line_follower_state_debounced();
 crossroad_t line_follower_crossroad();
+crossroad_t line_follower_crossroad_fast();
 crossroad_t line_follower_last_crossroad();
 encoder_position_t line_follower_last_crossroad_position();
 bool line_follower_last_crossroad_updated();

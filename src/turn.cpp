@@ -39,11 +39,11 @@ void turn_loop(unsigned long now)
     motor_move_lin(u, -u);
 
     float e = PID_angle_wrap(y - target);
-    if (expect_line && conf.turn_line_tolerance > e && e > -conf.turn_line_tolerance)
+    float e_prev = PID_angle_wrap(y - prev_target);
+    if (expect_line && conf.turn_line_tolerance > e_prev && e_prev > -conf.turn_line_tolerance)
     {
         uint16_t off = abs(line_follower_offset());
-        uint8_t s = line_follower_state();  // state_debounced / crossroad is too slow
-        if ((s & 0b1001) != 0b1001 || (s & 0b0110) == 0b0110) off = -1;
+        if (line_follower_crossroad_fast() != cr_I) off = -1;
         if (off < line_min)
         {
             line_min = off;
@@ -53,8 +53,9 @@ void turn_loop(unsigned long now)
 
     if (abs(e) < 2.5 && abs(u) < 5)
     {
-        if (expect_line && line_follower_crossroad() != cr_I && target != prev_target)
+        if (expect_line && line_follower_crossroad_fast() != cr_I && target != prev_target)
         {
+            // retry
             target = prev_target;
             return;
         }

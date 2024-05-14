@@ -39,6 +39,38 @@ void line_follower_init()
 }
 #endif
 
+static crossroad_t decode_crossroad(uint8_t state)
+{
+    // detekce krizovatek
+    // 0 je cara
+    switch (state_debounced)
+    {
+        case 0b0001:
+        case 0b0011:
+        case 0b0101:
+        case 0b0111:
+            return cr_G;
+
+        case 0b1000:
+        case 0b1010:
+        case 0b1100:
+        case 0b1110:
+            return cr_7;
+
+        case 0b0000:
+            return cr_T;
+
+        case 0b1001:
+        case 0b1101:
+        case 0b1011:
+            return cr_I;
+
+        default:
+            // invalid
+            return cr_0;
+    }
+}
+
 
 void line_follower_loop(unsigned long now)
 {
@@ -95,39 +127,7 @@ void line_follower_loop(unsigned long now)
     const encoder_position_t pos = encoder_position();
     crossroad_t prev_crossroad = crossroad;
 
-    // detekce krizovatek
-    // 0 je cara
-    switch (state_debounced)
-    {
-        case 0b0001:
-        case 0b0011:
-        case 0b0101:
-        case 0b0111:
-            crossroad = cr_G;
-            break;
-
-        case 0b1000:
-        case 0b1010:
-        case 0b1100:
-        case 0b1110:
-            crossroad = cr_7;
-            break;
-
-        case 0b0000:
-            crossroad = cr_T;
-            break;
-
-        case 0b1001:
-        case 0b1101:
-        case 0b1011:
-            crossroad = cr_I;
-            break;
-
-        default:
-            // invalid
-            crossroad = cr_0;
-            break;
-    }
+    crossroad = decode_crossroad(state_debounced);
 
     if (prev_crossroad != cr_0 && crossroad == cr_0)
     {
@@ -264,6 +264,16 @@ crossroad_t line_follower_crossroad()
 {
     return crossroad;
 }
+
+
+/**
+ * Return crossroad read from sensor, no debouncing.
+ */
+crossroad_t line_follower_crossroad_fast()
+{
+    return decode_crossroad(line_follower_state());
+}
+
 
 /**
  * Return last valid crossroad.
