@@ -12,6 +12,8 @@ static bool turning = false;
 static bool expect_line = false;
 static uint16_t line_min = 0;
 static float target = 0.0;
+static float prev_target = 0.0;
+static uint8_t target_debounce = 0;
 static PID_angle_t pid;
 
 #define Ts 10UL
@@ -40,7 +42,8 @@ void turn_loop(unsigned long now)
     if (expect_line && conf.turn_line_tolerance > e && e > -conf.turn_line_tolerance)
     {
         uint16_t off = abs(line_follower_offset());
-        if (line_follower_crossroad() != cr_I) off = -1;
+        uint8_t s = line_follower_state();  // state_debounced / crossroad is too slow
+        if ((s & 0b1001) != 0b1001 || (s & 0b0110) == 0b0110) off = -1;
         if (off < line_min)
         {
             line_min = off;
@@ -50,6 +53,13 @@ void turn_loop(unsigned long now)
 
     if (abs(e) < 2.5 && abs(u) < 5)
     {
+        if (expect_line && line_follower_crossroad() != cr_I && target != prev_target)
+        {
+            target = prev_target;
+            return;
+        }
+        target_debounce++;
+        if (target_debounce < 5) return;
         turning = false;
         motor_move_lin(0, 0);
     }
@@ -66,6 +76,8 @@ void turn_turn_relative(float angle, bool p_expect_line)
     turning = true;
     float y = imu_angle_Z();
     target = PID_angle_wrap(y + angle);
+    prev_target = target;
+    target_debounce = 0;
     expect_line = p_expect_line;
     line_min = conf.line_umax;  // line_Kp is less than 1 --> this is fine
 
@@ -88,5 +100,5 @@ bool turn_status()
 
 float turn_target()
 {
-    return target;
+    return prev_target;
 }

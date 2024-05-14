@@ -302,6 +302,7 @@ void line_follower_clear()
     prev_0_pos = pos;  // do not detect cr_i right after turning
     prev_nontrivial_pos = pos;
     handled = true;
+    // TODO cr_0 (dist) won't work after clear until another crossroad is detected
 }
 
 

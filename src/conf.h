@@ -18,9 +18,9 @@
     X(float, turn_Tf, 0.5) \
     /* doporucuje se 0.5*Ti (PI) nebo sqrt(Ti*Td) (PID) */ \
     X(float, turn_Tt, 15.0) \
-    X(uint8_t, turn_target, 70) \
-    X(uint8_t, turn_line_tolerance, 35) \
-    X(uint8_t, line_debounce, 3) /* *10ms */ \
+    X(uint8_t, turn_target, 90) \
+    X(uint8_t, turn_line_tolerance, 55) \
+    X(uint8_t, line_debounce, 2) /* *10ms */ \
     X(uint8_t, dead_end_dist, 50) \
     X(uint8_t, min_cr_dist, 80) /* minimum distance between crossroads, mm */ \
     X(uint8_t, cr_delay_mm, 10)
