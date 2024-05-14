@@ -47,7 +47,7 @@ void turn_loop(unsigned long now)
         }
     }
 
-    if (abs(e) < 3.0 && abs(u) < 6)
+    if (abs(e) < 2.5 && abs(u) < 6)
     {
         turning = false;
         motor_move_lin(0, 0);

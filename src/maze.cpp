@@ -153,7 +153,7 @@ void maze_loop(unsigned long now)
             int32_t dist = encoder_distance_mm(lpos, pos);
             line_follower_follow(
                 ((dist >= conf.fast_offset_mm || route_follow_route.stack[route_follow_index-1].direction == crd_straight) &&
-                 (dist <= node.distance_mm - conf.fast_offset_mm || node.direction == crd_straight)
+                 (dist <= node.distance_mm - conf.fast_offset_mm - conf.cr_delay_mm || node.direction == crd_straight)
                 )
                 ? conf.fast_speed
                 : conf.base_speed

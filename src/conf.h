@@ -7,7 +7,7 @@
     X(uint8_t, base_speed, 50) \
     X(uint8_t, fast_speed, 180) \
     X(uint8_t, map_speed, 50) \
-    X(uint8_t, fast_offset_mm, 80) \
+    X(uint8_t, fast_offset_mm, 140) \
     /* line_Kp must be between 0 and 1.0 */ \
     X(float, line_Kp, 0.8) \
     X(uint8_t, line_umax, 50) \
@@ -19,10 +19,11 @@
     /* doporucuje se 0.5*Ti (PI) nebo sqrt(Ti*Td) (PID) */ \
     X(float, turn_Tt, 15.0) \
     X(uint8_t, turn_target, 70) \
-    X(uint8_t, turn_line_tolerance, 40) \
+    X(uint8_t, turn_line_tolerance, 35) \
     X(uint8_t, line_debounce, 3) /* *10ms */ \
     X(uint8_t, dead_end_dist, 50) \
-    X(uint8_t, min_cr_dist, 80) /* minimum distance between crossroads, mm */
+    X(uint8_t, min_cr_dist, 80) /* minimum distance between crossroads, mm */ \
+    X(uint8_t, cr_delay_mm, 10)
 
 #define X_STRUCT(type, name, default) type name;
 typedef struct {

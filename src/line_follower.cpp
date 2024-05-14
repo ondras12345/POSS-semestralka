@@ -163,7 +163,7 @@ void line_follower_loop(unsigned long now)
         DEBUG_crossroad->println();
     }
 
-    if (encoder_distance_mm(prev_nontrivial_pos, pos) >= 10 && !handled)
+    if (encoder_distance_mm(prev_nontrivial_pos, pos) >= conf.cr_delay_mm && !handled)
     {
         handled = true;
         if (crossroad == cr_I || crossroad == cr_0)
