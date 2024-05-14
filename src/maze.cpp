@@ -301,7 +301,7 @@ void maze_loop(unsigned long now)
                         map_backtracking = true;
                         DEBUG_map->println(F("map_backtracking=true"));
                         line_follower_stop();
-                        turn_turn_relative(180, true);
+                        turn_turn_relative(190, true);
                         state = ms_mapping_turning;
                         DEBUG_map->println(F("[D] dead end, turning 180"));
                         break;

@@ -22,7 +22,7 @@
     X(uint8_t, turn_line_tolerance, 40) \
     X(uint8_t, line_debounce, 3) /* *10ms */ \
     X(uint8_t, dead_end_dist, 50) \
-    X(uint8_t, min_cr_dist, 50) /* minimum distance between crossroads, mm */
+    X(uint8_t, min_cr_dist, 80) /* minimum distance between crossroads, mm */
 
 #define X_STRUCT(type, name, default) type name;
 typedef struct {
