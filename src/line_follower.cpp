@@ -49,7 +49,7 @@ void line_follower_loop(unsigned long now)
         {
             int16_t off = line_follower_offset();
             int8_t u = (int8_t)(constrain(off, -conf.line_umax, conf.line_umax));
-            if (crossroad == cr_0) u = 0;
+            if (crossroad == cr_0 || crossroad == cr_7 || crossroad == cr_G) u = 0;
             motor_move_lin(base_speed+u, base_speed-u);
             controller_prev_millis = now;
         }
