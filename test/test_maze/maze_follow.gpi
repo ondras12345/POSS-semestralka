@@ -1,6 +1,6 @@
 #!/usr/bin/env gnuplot
 
-set terminal gif animate delay 5 optimize
+set terminal gif animate delay 2 optimize
 set output 'maze_follow.gif'
 
 MAP_WIDTH=344
@@ -36,7 +36,7 @@ do for [i=1:int(STATS_records):10] {
 }
 
 
-set terminal gif animate delay 5 optimize
+set terminal gif animate delay 2 optimize
 set output 'maze_map.gif'
 unset label 1
 DATAFILE='maze_map.csv'
