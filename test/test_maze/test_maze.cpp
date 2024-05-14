@@ -140,7 +140,7 @@ void turn_turn_relative(float angle, bool expect_line)
         pos.left -= N_pulses;
         pos.right += N_pulses;
     }
-    else if (angle == 180 || angle == -180)
+    else if (170 <= angle && angle <= 190 || -190 <= angle && angle <= -170)
     {
         orientation_vec = vec2_scale(orientation_vec, -1);
         pos.left -= 2*N_pulses;
