@@ -40,6 +40,7 @@ void turn_loop(unsigned long now)
     if (expect_line && conf.turn_line_tolerance > e && e > -conf.turn_line_tolerance)
     {
         uint16_t off = abs(line_follower_offset());
+        if (line_follower_crossroad() != cr_I) off = -1;
         if (off < line_min)
         {
             line_min = off;
