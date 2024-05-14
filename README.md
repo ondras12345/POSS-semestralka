@@ -53,6 +53,23 @@ state map_start
 ```
 
 
+### Final route (mapped)
+```
+maze_push X     I       197
+maze_push 3     I       302
+maze_push X     L       310
+maze_push G     R       333
+maze_push 7     L       280
+maze_push G     R       658
+maze_push E     R       1342
+maze_push X     I       1327
+maze_push 3     L       307
+maze_push 3     L       645
+maze_push X     R       1330
+maze_push F     I       319
+```
+
+
 ### Final route (manual)
 ```
 debug crossroad 1

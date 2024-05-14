@@ -3,14 +3,13 @@
 
 #define CONF_ITEMS(X) \
     X(float, mm_per_pulse, 0.201451757605416f) \
-    /* TODO set speeds */ \
-    X(uint8_t, base_speed, 50) \
-    X(uint8_t, fast_speed, 180) \
-    X(uint8_t, map_speed, 50) \
-    X(uint8_t, fast_offset_mm, 140) \
+    X(uint8_t, base_speed, 60) \
+    X(uint8_t, fast_speed, 220) \
+    X(uint8_t, map_speed, 60) \
+    X(uint8_t, fast_offset_mm, 100) \
     /* line_Kp must be between 0 and 1.0 */ \
-    X(float, line_Kp, 0.8) \
-    X(uint8_t, line_umax, 50) \
+    X(float, line_Kp, 0.6) \
+    X(uint8_t, line_umax, 60) \
     X(float, turn_Kp, 15.0) \
     X(float, turn_Ki, 30.0) \
     X(float, turn_Kd, 0.0) \
@@ -21,7 +20,7 @@
     X(uint8_t, turn_target, 90) \
     X(uint8_t, turn_line_tolerance, 55) \
     X(uint8_t, line_debounce, 2) /* *10ms */ \
-    X(uint8_t, dead_end_dist, 50) \
+    X(uint8_t, dead_end_dist, 30) \
     X(uint8_t, min_cr_dist, 80) /* minimum distance between crossroads, mm */ \
     X(uint8_t, cr_delay_mm, 10)
 

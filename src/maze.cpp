@@ -349,7 +349,6 @@ void maze_loop(unsigned long now)
             if (!turn_status())
             {
                 // finished turning
-                delay(500);  // TODO
                 line_follower_follow(conf.map_speed);
                 state = ms_mapping;
                 line_follower_clear();

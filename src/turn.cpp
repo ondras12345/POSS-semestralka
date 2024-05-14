@@ -51,7 +51,7 @@ void turn_loop(unsigned long now)
         }
     }
 
-    if (abs(e) < 2.5 && abs(u) < 5)
+    if (abs(e) < 3.0 && abs(u) < 6)
     {
         if (expect_line && line_follower_crossroad_fast() != cr_I && target != prev_target)
         {
