@@ -1,0 +1,582 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{cmap}  % jinak [T1]{fontenc} rozbije hledani a kopirovani z PDF
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+
+\usepackage[
+    a4paper,
+    %showframe,
+    includefoot,bottom=20mm
+]{geometry}
+\usepackage{titling}
+\usepackage{booktabs}
+\usepackage{siunitx}
+%\usepackage{array}
+\usepackage{fancyhdr}
+%\usepackage[shortlabels]{enumitem}
+%\usepackage{amsmath}
+%\usepackage{mathtools}
+%\usepackage{gnuplottex}
+%\usepackage{pdfpages}
+%\usepackage{placeins}  % \FloatBarrier
+\usepackage{float}
+%\usepackage{caption}
+%\usepackage{subcaption}
+\usepackage{listings}
+%\usepackage{bm}
+\usepackage[hidelinks]{hyperref}
+%\usepackage[czech]{varioref}
+%\usepackage[backend=biber,style=iso-numeric]{biblatex}
+%\addbibresource{reference.bib}
+
+\usepackage{csquotes}
+
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+\usepackage{dirtree}
+
+\usepackage[disable]{todonotes}  % [disable]
+
+%\usepackage[EFvoltages,siunitx,european, american inductors]{circuitikz}
+\usepackage{pict2e}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+%\usetikzlibrary{shapes,positioning,calc,fit,arrows.meta}
+%\usetikzlibrary{fit}
+
+% https://www3.nd.edu/~dchiang/teaching/theory/2018/www/tikz_tutorial.pdf
+\tikzset{
+    ->, % makes the edges directed
+    >=stealth', % makes the arrow heads bold
+    node distance=2.5cm and 1.0cm,  % vertical horizontal
+    every state/.style={thick, fill=gray!10, rectangle, rounded corners},
+    every loop/.style={looseness=2},
+}
+
+\usepackage[toc,page]{appendix}
+\renewcommand{\appendixname}{Příloha}
+\renewcommand{\appendixtocname}{Přílohy}
+\renewcommand{\appendixpagename}{Přílohy}
+
+% Roztrhana matika
+%\allowdisplaybreaks
+
+
+\sisetup{
+    output-decimal-marker = {,},
+    list-separator = {; },
+    list-final-separator = { a~},
+    list-pair-separator = { a~},
+    group-digits,
+    group-minimum-digits=4,
+    range-phrase=\text{--},
+    range-units=single,
+    exponent-product=\ensuremath{\cdot},
+    uncertainty-mode=separate,
+    output-complex-root=\iu,
+}
+
+
+\lstset{language=C++,
+    basicstyle={\fontfamily{lmtt}\selectfont},
+    columns=fullflexible,
+    showlines=true,
+    breaklines=true,
+    postbreak=\mbox{$\hookrightarrow$\space},
+    showstringspaces=false,
+    xleftmargin=1em,
+    literate=%
+      {---}{{\llap{\mdseries-{-}-}}}3
+      {>}{{\textgreater}}1
+      {>-}{{\textgreater-}}2
+      {|}{{\textbar}}1
+      {|-}{{\textbar-}}2
+      % make dashes shorter
+      {-}{{-}}1
+      {-\ }{{\mdseries-\ }}2
+      {°}{\textdegree}1
+      {á}{{\'a}}1
+      {í}{{\'i}}1
+      {é}{{\'e}}1
+      {ý}{{\'y}}1
+      {ú}{{\'u}}1
+      {ó}{{\'o}}1
+      {ě}{{\v{e}}}1
+      {š}{{\v{s}}}1
+      {č}{{\v{c}}}1
+      {ř}{{\v{r}}}1
+      {ž}{{\v{z}}}1
+      {ď}{{\v{d}}}1
+      {ť}{{\v{t}}}1
+      {ň}{{\v{n}}}1
+      {ů}{{\r{u}}}1
+      {Á}{{\'A}}1
+      {Í}{{\'I}}1
+      {É}{{\'E}}1
+      {Ý}{{\'Y}}1
+      {Ú}{{\'U}}1
+      {Ó}{{\'O}}1
+      {Ě}{{\v{E}}}1
+      {Š}{{\v{S}}}1
+      {Č}{{\v{C}}}1
+      {Ř}{{\v{R}}}1
+      {Ž}{{\v{Z}}}1
+      {Ď}{{\v{D}}}1
+      {Ť}{{\v{T}}}1
+      {Ň}{{\v{N}}}1
+      {Ů}{{\r{U}}}1,
+}
+
+
+\lstdefinestyle{terminal}{
+    language=,
+    basicstyle={\fontfamily{lmtt}\selectfont\footnotesize},
+    frame=single,
+    frameround=tttt,
+    columns=flexible,
+}
+
+\newcommand\conf[1]{\texttt{conf.\detokenize{#1}}}
+\newcommand\CLIcommand[1]{\texttt{\detokenize{#1}}}
+
+% headers and footers
+\setlength{\headheight}{26pt} % prevents a warning most likely caused by diacritics; two author names
+\pagestyle{fancy}
+%\renewcommand{\headrulewidth}{0pt}
+\fancyhf{} % clears header and footer, otherwise "plain" will appear
+%\fancyhead{} % only clears the header
+%\lhead{\theauthor}
+\lhead{\theauthor}
+\chead{\thetitle}
+\rhead{\thepage}
+\fancyhfoffset{0pt} % fixes width after \newgeometry
+
+
+\author{Ondřej Sluka}
+\date{2024-05-17}
+\title{Semestrální projekt KKY/POSS}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Zadání}
+Cílem této práce je vytvořit firmware pro mikrokontrolér ATmega 2560 pro řízení
+robotické platformy mBot Ranger, který umožní autonomní zmapování bludiště
+a následný rychlý průjezd optimální trasou.
+
+\section{Řešení}
+Omezíme se na řešení problému mapování bludiště \emph{bez cyklů}.
+
+\subsection{Struktura repositáře se zdrojovým kódem}
+Firmware je vyvinut v jazyce C/C++ s využitím frameworku Arduino, pro sestavení
+používáme nástroj \texttt{platformio}.
+Adresář se zdrojovým kódem je rozdělen do několika podadresářů:
+\begin{figure}[H]
+    % musi to byt float, neumi se rozdelit na vice stranek
+    \dirtree{%
+        .1 .
+        .2 doc/\DTcomment{adresář se zdrojovými kódy tohoto dokumentu}.
+        .2 lib/\DTcomment{adresář s knihovnami specifickými pro tento projekt}.
+        .3 MeRGBLineFollower180motorAuriga/\DTcomment{ovladač pro RGB modul sledování čáry, staženo z courseware}.
+        .3 PID/\DTcomment{naše vlastní knihovna implementující PID regulátory, oddělena pro snazší testování}.
+        .3 perf\_counter/\DTcomment{vlastní knihovna pro měření doby provádění částí programu}.
+        .2 src/\DTcomment{adresář se zdrojovými kódy firmware}.
+        .3 cli.\{h,cpp\}\DTcomment{příkazový řádek na sériovém portu}.
+        .3 conf.\{h,cpp\}\DTcomment{ladění parametrů bez nutnosti resetu}.
+        .3 crossroad.\{h,cpp\}\DTcomment{podpůrné funkce pro detekci křižovatek}.
+        .3 debug.\{h,cpp\}\DTcomment{podpora pro volitelné ladicí výpisy}.
+        .3 encoder.\{h,cpp\}\DTcomment{snímání polohy z enkodérů}.
+        .3 imu.\{h,cpp\}\DTcomment{obsluha gyroskopu}.
+        .3 line\_follower.\{h,cpp\}\DTcomment{regulátor pro sledování čáry; detekce křižovatek}.
+        .3 main.cpp\DTcomment{hlavní smyčka, stavový automat, \ldots}.
+        .3 maze.\{h,cpp\}\DTcomment{mapování bludiště a finální průjezd}.
+        .3 motor.\{h,cpp\}\DTcomment{ovládání motorů}.
+        .3 robot.\{h,cpp\}\DTcomment{definice stavů pro stavový automat}.
+        .3 turn.\{h,cpp\}\DTcomment{zatáčení}.
+        .2 test/\DTcomment{adresář se zdrojovými kódy automatických testů}.
+        .3 test\_PID/\DTcomment{testy knihovny PID}.
+        .4 test\_PID.m\DTcomment{referenční implementace PID regulátoru -- výukový materiál předmětu KKY/LS2}.
+        .4 \ldots.
+        .3 test\_encoder/\DTcomment{testy výpočtů vzdálenosti v kompilační jednotce \texttt{encoder}}.
+        .3 test\_maze/\DTcomment{testy algoritmů týkajících se průchodu bludištěm}.
+        .4 test\_maze.gpi\DTcomment{gnuplot skript pro vygenerování gif animací průchodů bludištěm}.
+        .4 maze.xcf\DTcomment{mapa bludiště -- bitmapový obrázek ve formátu grafického editoru GIMP}.
+        .4 maze.data\DTcomment{mapa bludiště -- binární formát}.
+        .4 \ldots.
+        .2 Makefile\DTcomment{konfigurace build systému \texttt{make}}.
+        .2 platformio.ini\DTcomment{konfigurace \texttt{platformio}}.
+    }
+\end{figure}
+
+Kompilace se spouští příkazem
+\begin{lstlisting}[style=terminal]
+$ make
+pio run
+Processing megaatmega2560 (platform: atmelavr; board: megaatmega2560; framework: arduino)
+-------------------------------------------------------------------------------
+[...]
+RAM:   [====      ]  44.4% (used 3637 bytes from 8192 bytes)
+Flash: [==        ]  18.9% (used 48010 bytes from 253952 bytes)
+[...]
+\end{lstlisting}
+Příkaz \texttt{make check} provádí statickou analýzu kódu, \texttt{make test}
+spouští automatické testy (testy běží na počítači, není potřeba mít přístup
+k mikrokontroléru architektury AVR), \texttt{make upload} nahraje program do
+mikrokontroléru pomocí bootloaderu.
+
+
+\subsection{CLI}
+Firmware robota nabízí rozhraní s příkazovým řádkem, kterým je možné
+ovládat a samostatně testovat všechny jeho funkce, vyčítat data ze
+senzorů a ladit parametry. Příklad použití je otištěn
+v příloze~\ref{app:CLI}.
+
+
+\subsection{Stavový automat}
+Hlavní stavový automat v kompilační jednotce \texttt{main} řídí vysokoúrovňové
+funkce robota. Automat přijímá povely od uživatele (stisky nárazníků, nastavení
+stavu příkazem \texttt{state} v CLI). Stavový diagram je na
+obrázku~\ref{fig:stavovy diagram}. Některé stavy (např. \texttt{line\_follow})
+je možné dosáhnout pouze z CLI. Některé stavy se používají spíše jako příkazy
+(stavový automat v nich nesetrvá).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \node[state, initial, accepting] (s_emergency) {\texttt{emergency}};
+        \node[state, below right=of s_emergency] (s_maze_follow) {\texttt{maze\_follow}};
+        \node[state, below=of s_maze_follow] (s_maze_following) {\texttt{maze\_following}};
+        \node[state, below left=of s_emergency] (s_map_start) {\texttt{map\_start}};
+        \node[state, below=of s_map_start] (s_map_mapping) {\texttt{map\_mapping}};
+        \node[state, below left=of s_maze_following] (s_idle) {\texttt{idle}};
+        \node[state, left=of s_idle] (s_stop) {\texttt{stop}};
+        \node[state, right=of s_idle] (s_finish) {\texttt{finish}};
+        \node[state, left=of s_map_start] (s_line_follow) {\texttt{line\_follow}};
+        \node[state, below=of s_line_follow] (s_line_following) {\texttt{line\_following}};
+        \draw
+            (s_emergency)       edge[above, sloped] node{pravý nárazník}            (s_maze_follow)
+            (s_emergency)       edge[above, sloped] node{levý nárazník}             (s_map_start)
+            (s_maze_follow)     edge[above, sloped] node[text width=1.8cm]{na čáře a má mapu} (s_maze_following)
+            (s_maze_follow)     edge[bend right, above, sloped] node{jinak}         (s_idle)
+            (s_map_start)       edge                                                (s_map_mapping)
+            (s_maze_following)  edge[loop right]                                    (s_maze_following)
+            (s_map_mapping)     edge[loop left]                                     (s_map_mapping)
+            (s_stop)            edge                                                (s_idle)
+            (s_map_mapping)     edge[above, sloped, bend right] node{chyba}         (s_emergency)
+            (s_maze_following)  edge[above, sloped, bend left] node{chyba}          (s_emergency)
+            (s_map_mapping)     edge[above, sloped, bend right] node{v cíli}        (s_finish)
+            (s_maze_following)  edge[above, sloped] node{v cíli}                    (s_finish)
+            (s_finish)          edge[below, sloped, bend left, out=270, in=270, looseness=0.8] node{pravý nárazník} (s_maze_follow)
+            (s_line_follow)     edge                                                (s_line_following)
+            (s_line_following)  edge[loop left]                                     (s_line_following)
+            (s_line_following)  edge[above, sloped, bend right] node{křižovatka}    (s_stop)
+            (s_idle)            edge[above, sloped] node{pravý nárazník}            (s_maze_follow)
+            (s_idle)            edge[above, sloped] node{levý nárazník}             (s_map_start)
+            ;
+    \end{tikzpicture}
+    \caption{Stavový diagram hlavního stavového automatu}
+    \label{fig:stavovy diagram}
+\end{figure}
+
+
+\subsection{Detekce křižovatek}
+Detekce křižovatek využívá dat ze čtyř senzorů čáry a informaci o ujeté
+vzdálenosti z enkodérů na motorech. V tabulce~\ref{tab:krizovatky} jsou
+otištěny uvažované typy křižovatek a odpovídající hodnoty výčtového datového
+typu \verb!crossroad_t! z \texttt{crossroad.h}. Detekci křižovatek provádí
+\texttt{line\_follower.cpp}, který nabízí několik funkcí pro zjištění aktuální
+křižovatky. Úplná detekce je provedena až po přejetí křižovatky
+o \conf{cr_delay_mm} milimetrů.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Uvažované typy křižovatek}
+    \label{tab:krizovatky}
+    \setlength{\unitlength}{3mm}
+    \linethickness{.3mm}
+    \begin{tabular}{c>{\ttfamily\catcode`_=12}c>{\ttfamily}cl}
+        \toprule
+        křižovatka & \verb!crossroad_t! & znak & popis \\
+        \midrule
+                   & cr_0 & '0' & nevím / neinicializováno / mimo čáru / nevalidní \\
+        \begin{picture}(1,1)
+            \Line(0.5,0)(0.5,1)
+        \end{picture}
+                   & cr_I & 'I' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,.5)
+            \Line(.5,.5)(1,.5)
+        \end{picture}
+                   & cr_G & 'G' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,.5)
+            \Line(0,.5)(.5,.5)
+        \end{picture}
+                   & cr_7 & '7' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,.5)
+            \Line(0,.5)(1,.5)
+        \end{picture}
+                   & cr_T & 'T' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,1)
+            \Line(.5,.5)(1,.5)
+        \end{picture}
+                   & cr_E & 'E' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,1)
+            \Line(0,.5)(.5,.5)
+        \end{picture}
+                   & cr_3 & '3' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,1)
+            \Line(0,.5)(1,.5)
+        \end{picture}
+                   & cr_X & 'X' & \\
+        \begin{picture}(1,1)
+            \Line(.5,0)(.5,.5)
+        \end{picture}
+                   & cr_i & 'i' & slepý konec \\
+        \begin{picture}(1,1)
+            \polygon*(0,0)(0,1)(1,1)(1,0)
+        \end{picture}
+                   & cr_F & 'F' & cíl \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\subsection{Sledování čáry}
+Pro sledování čáry používáme P regulátor se zesílením \conf{line_Kp} a akčním
+zásahem saturovaným na hodnotě \conf{line_umax}, přičemž regulační odchylku
+čteme přímo z modulu čidla čáry a akční zásah přičítáme k požadované rychlosti
+levého pásu a odčítáme od požadované rychlosti pravého pásu.
+
+
+\subsection{Otáčení}
+Otáčení robota využívá zpětné vazby z gyroskopu a můžeme je spustit z CLI dvěma
+způsoby: \CLIcommand{turn <target>} a \CLIcommand{turn line <target>}.
+
+\CLIcommand{turn} otočí robota o \texttt{<target>} stupňů, přičemž kladné
+hodnoty otáčí doprava.
+
+\CLIcommand{turn line} funguje podobně, ale v okolí \conf{turn_line_tolerance}
+stupňů kolem požadované hodnoty začne robot hledat čáru (minimum regulační
+odchylky pro sledování čáry). Když je minimum nalezeno, je aktuální úhel
+z gyroskopu nastaven jako nová cílová hodnota.
+
+Otáčení je řízeno PID regulátorem s parametry \conf{turn_Kp}, \conf{turn_Ki},
+\ldots. Bylo nutné implementovat speciální verzi regulátoru (viz
+knihovna \texttt{PID}), neboť gyroskop vrací úhel natočení kolem osy Z
+v rozsahu \numrange[range-phrase={ \text{až} }]{-180}{180}.
+
+Autonomní funkce robota používají pouze ekvivalent příkazu \CLIcommand{turn
+line}, vždy při otáčení hledají čáru.
+
+
+\subsection{Mapování}
+Mapování probíhá metodou backtracking. Pracujeme se zásobníkem reprezentujícím
+cestu od startu k aktuální pozici robota tvořenou záznamy o typu křižovatky,
+směru průjezdu a vzdálenosti od předchozí křižovatky.
+Pomocí CLI můžeme s mapou manipulovat pomocí následujících příkazů:
+\begin{lstlisting}[style=terminal,tabsize=10,columns=fixed]
+sluka:$ help
+[...]
+maze_pop: Pop a node off the route
+maze_print: Print current maze route
+maze_push: Push a node onto the route
+[...]
+
+sluka:$ maze_print
+maze_route_current (bottom to top)
+          crossroad	direction	distance [mm]
+maze_push X	I	197
+maze_push 3	I	302
+maze_push X	L	310
+maze_push G	R	333
+maze_push 7	L	280
+maze_push G	R	658
+maze_push E	R	1342
+maze_push X	I	1327
+maze_push 3	L	307
+maze_push 3	L	645
+maze_push X	R	1330
+maze_push F	I	319
+
+sluka:$
+\end{lstlisting}
+
+Soubor \texttt{test/test\_maze/maze\_map.gif}\footnote{nepodařilo se nám vložit
+animovaný GIF do PDF souboru tak, aby jej úspěšně zobrazily všechny prohlížeče}
+obsahuje animaci procesu mapování vygenerovanou testem \texttt{test\_maze}.
+
+
+\subsection{Finální průjezd}
+Při finálním průjezdu se zásobník čte zdola nahoru a záznam se porovnává
+s naposledy detekovanou křižovatkou. Pokud se informace neshodují, robot přejde
+do nouzového režimu. V opačném případě robot na křižovatce odbočí podle
+instrukce v zásobníku.
+
+V okolí křižovatky jede robot rychlostí \conf{base_speed}. Pokud je od
+nejbližší křižovatky vzdálen nejméně \conf{fast_offset_mm}, nebo pokud na
+nejbližší křižovatce jel (či pojede) rovně, jede rychlostí \conf{fast_speed}.
+
+
+\section{Závěr}
+Podařilo se vyvinou firmware, se kterým robot úspěšně vyřešil úlohu. Finální
+průjezd trval \qty{22}{\second}. Firmware obsahuje bohatou sadu nástrojů pro
+diagnostiku a ladění parametrů bez nutnosti resetu; funkce jeho
+nejdůležitějších částí je kontrolována automatickými testy.
+
+
+\todo[inline]{pozor na datum na titulni strance}
+\listoftodos
+
+%\printbibliography
+
+\clearpage
+\begin{appendices}
+    \section{Příklad použití příkazového řádku}
+    \label{app:CLI}
+    \begin{lstlisting}[style=terminal]
+sluka:$ help
+
+---- Shortcut Keys ----
+
+Ctrl-A : Jumps the cursor to the beginning of the line.
+Ctrl-E : Jumps the cursor to the end of the line.
+Ctrl-D : Log Out.
+Ctrl-R : Reverse-i-search.
+Pg-Up  : History search backwards and auto completion.
+Pg-Down: History search forward and auto completion.
+Home   : Jumps the cursor to the beginning of the line.
+End    : Jumps the cursor to the end of the line.
+
+---- Available commands ----
+
+conf: Get/set config
+debug: Enable/disable debug
+encoder: Read rotary encoders
+imu: Get IMU state
+line: Read line follower
+maze_pop: Pop a node off the route
+maze_print: Print current maze route
+maze_push: Push a node onto the route
+motor_move: Set motor output (nonlinear)
+motor_move_lin: Set motor output (linearized)
+perf: Print perf counters
+state: Get/set state machine state
+turn: Get / set turn state
+uptime: Returns the time passed since the program started.
+
+sluka:$ conf
+Usage: conf [name value]
+
+configuration:
+conf mm_per_pulse 0.20
+conf base_speed 60
+conf fast_speed 220
+conf map_speed 60
+conf fast_offset_mm 100
+conf line_Kp 0.60
+conf line_umax 60
+conf turn_Kp 15.00
+conf turn_Ki 30.00
+conf turn_Kd 0.00
+conf turn_Tf 0.50
+conf turn_Tt 15.00
+conf turn_target 90
+conf turn_line_tolerance 55
+conf line_debounce 2
+conf dead_end_dist 30
+conf min_cr_dist 80
+conf cr_delay_mm 10
+
+sluka:$ debug
+crossroad: 0
+encoder: 0
+maze_follow: 0
+map: 0
+
+sluka:$ debug encoder 1
+crossroad: 0
+encoder: 1
+maze_follow: 0
+map: 0
+
+sluka:$ # ručně pohnu s pásy
+sluka:$ [D] went 10mm
+[D] went 10mm
+[D] went 10mm
+[D] went 10mm
+
+sluka:$ imu
+imu:
+  angle_X: -0.37
+  angle_Y: 0.01
+  angle_Z: -1.25
+
+sluka:$ turn 90
+turning 90
+turning: 1
+target: 89.07
+angle_Z: -0.93
+usage: turn [[line] target]
+
+sluka:$ imu
+imu:
+  angle_X: -0.03
+  angle_Y: -0.31
+  angle_Z: 91.72
+
+sluka:$ turn -90
+turning -90
+turning: 1
+target: 1.88
+angle_Z: 91.88
+usage: turn [[line] target]
+
+sluka:$ imu
+imu:
+  angle_X: -0.20
+  angle_Y: 0.00
+  angle_Z: -0.22
+
+sluka:$ perf
+cli     2800
+line_follower   1368
+state_machine   44
+imu     2840
+turn    36
+maze    44
+
+sluka:$ state
+state: idle
+emergency: 0
+
+sluka:$ maze_print
+maze_route_current (bottom to top)
+        crossroad       direction       distance [mm]
+
+sluka:$ maze_push X I 100
+
+sluka:$ maze_push 3 I 300
+
+sluka:$ maze_push X L 300
+
+sluka:$ maze_print
+maze_route_current (bottom to top)
+        crossroad       direction       distance [mm]
+maze_push X     I       100
+maze_push 3     I       300
+maze_push X     L       300
+
+sluka:$
+    \end{lstlisting}
+\end{appendices}
+
+\end{document}

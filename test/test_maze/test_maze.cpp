@@ -581,7 +581,7 @@ int runUnityTests(void)
     RUN_TEST(test_maze_map);
     RUN_TEST(test_maze_follow);
 
-    //fprintf(stderr, "gnuplot result: %d\n", system("./maze_follow.gpi"));
+    //fprintf(stderr, "gnuplot result: %d\n", system("./test_maze.gpi"));
 
     return UNITY_END();
 }

@@ -1,38 +1,4 @@
 # POSS semestralka - tank
-
-## TODO test
-- [x] cli set states w/o s_ prefix
-- [x] test & tune `turn`
-- [x] cli `perf`
-- [x] test `encoder` pulse overflow
-- [x] calibrate `encoder` pulses to mm
-- [x] test `bluetooth`
-- [x] cli `maze print`
-- [x] cli `maze push`
-- [x] cli `maze pop`
-- [x] refactored `line_follower` & tune Kp
-- [x] `crossroad` debug
-- [x] `s_maze_follow`
-- [x] speed up in straight segments
-- [x] imu sometimes measures nonsense
-  - There is no magnetic compass on board
-  - Gyro is calibrated 500ms after boot. Ensure no movement.
-- [x] test for backtracking, optimize `map_dir_order`
-  - I would need to mock all of these:
-    - [x] encoder distance
-    - [x] crossroad detection
-    - [x] line_follower
-    - [x] turn
-    - [x] Serial / DEBUG
-    - [x] error_code
-- [x] map
-- [x] dead end detection
-- [x] set new turn target & tolerance
-
-## TODO implement
-- [ ] do not map first cross ??
-
-
 ## Notes
 O neco mirnejsi manevry
 ```

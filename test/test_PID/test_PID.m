@@ -1,3 +1,6 @@
+% Tento soubor je soucasti vyukovych materialu
+% KKY/LS2, autor M. Goubej.
+% Upraveno.
 clear;
 close all;
 

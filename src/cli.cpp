@@ -156,7 +156,7 @@ static void cmnd_conf(char *args, Stream *response)
 
     char * setting_name = strsep(&args, " ");
     const char * setting_value = args;
-    if (setting_name == nullptr)
+    if (setting_name == nullptr)  // TODO || *setting_name == '\0'
     {
         // this is ok, just print out config
     }
