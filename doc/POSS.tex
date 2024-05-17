@@ -166,13 +166,13 @@
 \section{Zadání}
 Cílem této práce je vytvořit firmware pro mikrokontrolér ATmega 2560 pro řízení
 robotické platformy mBot Ranger, který umožní autonomní zmapování bludiště
-a následný rychlý průjezd optimální trasou.
+a~následný rychlý průjezd optimální trasou.
 
 \section{Řešení}
 Omezíme se na řešení problému mapování bludiště \emph{bez cyklů}.
 
 \subsection{Struktura repositáře se zdrojovým kódem}
-Firmware je vyvinut v jazyce C/C++ s využitím frameworku Arduino, pro sestavení
+Firmware je vyvinut v~jazyce C/C++ s~využitím frameworku Arduino, pro sestavení
 používáme nástroj \texttt{platformio}.
 Adresář se zdrojovým kódem je rozdělen do několika podadresářů:
 \begin{figure}[H]
@@ -180,8 +180,8 @@ Adresář se zdrojovým kódem je rozdělen do několika podadresářů:
     \dirtree{%
         .1 .
         .2 doc/\DTcomment{adresář se zdrojovými kódy tohoto dokumentu}.
-        .2 lib/\DTcomment{adresář s knihovnami specifickými pro tento projekt}.
-        .3 MeRGBLineFollower180motorAuriga/\DTcomment{ovladač pro RGB modul sledování čáry, staženo z courseware}.
+        .2 lib/\DTcomment{adresář s~knihovnami specifickými pro tento projekt}.
+        .3 MeRGBLineFollower180motorAuriga/\DTcomment{ovladač pro RGB modul sledování čáry, staženo z~courseware}.
         .3 PID/\DTcomment{naše vlastní knihovna implementující PID regulátory, oddělena pro snazší testování}.
         .3 perf\_counter/\DTcomment{vlastní knihovna pro měření doby provádění částí programu}.
         .2 src/\DTcomment{adresář se zdrojovými kódy firmware}.
@@ -189,11 +189,11 @@ Adresář se zdrojovým kódem je rozdělen do několika podadresářů:
         .3 conf.\{h,cpp\}\DTcomment{ladění parametrů bez nutnosti resetu}.
         .3 crossroad.\{h,cpp\}\DTcomment{podpůrné funkce pro detekci křižovatek}.
         .3 debug.\{h,cpp\}\DTcomment{podpora pro volitelné ladicí výpisy}.
-        .3 encoder.\{h,cpp\}\DTcomment{snímání polohy z enkodérů}.
+        .3 encoder.\{h,cpp\}\DTcomment{snímání polohy z~enkodérů}.
         .3 imu.\{h,cpp\}\DTcomment{obsluha gyroskopu}.
         .3 line\_follower.\{h,cpp\}\DTcomment{regulátor pro sledování čáry; detekce křižovatek}.
         .3 main.cpp\DTcomment{hlavní smyčka, stavový automat, \ldots}.
-        .3 maze.\{h,cpp\}\DTcomment{mapování bludiště a finální průjezd}.
+        .3 maze.\{h,cpp\}\DTcomment{mapování bludiště a~finální průjezd}.
         .3 motor.\{h,cpp\}\DTcomment{ovládání motorů}.
         .3 robot.\{h,cpp\}\DTcomment{definice stavů pro stavový automat}.
         .3 turn.\{h,cpp\}\DTcomment{zatáčení}.
@@ -201,7 +201,7 @@ Adresář se zdrojovým kódem je rozdělen do několika podadresářů:
         .3 test\_PID/\DTcomment{testy knihovny PID}.
         .4 test\_PID.m\DTcomment{referenční implementace PID regulátoru -- výukový materiál předmětu KKY/LS2}.
         .4 \ldots.
-        .3 test\_encoder/\DTcomment{testy výpočtů vzdálenosti v kompilační jednotce \texttt{encoder}}.
+        .3 test\_encoder/\DTcomment{testy výpočtů vzdálenosti v~kompilační jednotce \texttt{encoder}}.
         .3 test\_maze/\DTcomment{testy algoritmů týkajících se průchodu bludištěm}.
         .4 test\_maze.gpi\DTcomment{gnuplot skript pro vygenerování gif animací průchodů bludištěm}.
         .4 maze.xcf\DTcomment{mapa bludiště -- bitmapový obrázek ve formátu grafického editoru GIMP}.
@@ -230,19 +230,19 @@ mikrokontroléru pomocí bootloaderu.
 
 
 \subsection{CLI}
-Firmware robota nabízí rozhraní s příkazovým řádkem, kterým je možné
-ovládat a samostatně testovat všechny jeho funkce, vyčítat data ze
-senzorů a ladit parametry. Příklad použití je otištěn
-v příloze~\ref{app:CLI}.
+Firmware robota nabízí rozhraní s~příkazovým řádkem, kterým je možné
+ovládat a~samostatně testovat všechny jeho funkce, vyčítat data ze
+senzorů a~ladit parametry. Příklad použití je otištěn
+v~příloze~\ref{app:CLI}.
 
 
 \subsection{Stavový automat}
-Hlavní stavový automat v kompilační jednotce \texttt{main} řídí vysokoúrovňové
+Hlavní stavový automat v~kompilační jednotce \texttt{main} řídí vysokoúrovňové
 funkce robota. Automat přijímá povely od uživatele (stisky nárazníků, nastavení
-stavu příkazem \texttt{state} v CLI). Stavový diagram je na
+stavu příkazem \texttt{state} v~CLI). Stavový diagram je na
 obrázku~\ref{fig:stavovy diagram}. Některé stavy (např. \texttt{line\_follow})
-je možné dosáhnout pouze z CLI. Některé stavy se používají spíše jako příkazy
-(stavový automat v nich nesetrvá).
+je možné dosáhnout pouze z~CLI. Některé stavy se používají spíše jako příkazy
+(stavový automat v~nich nesetrvá).
 
 \begin{figure}[htbp]
     \centering
@@ -260,7 +260,7 @@ je možné dosáhnout pouze z CLI. Některé stavy se používají spíše jako 
         \draw
             (s_emergency)       edge[above, sloped] node{pravý nárazník}            (s_maze_follow)
             (s_emergency)       edge[above, sloped] node{levý nárazník}             (s_map_start)
-            (s_maze_follow)     edge[above, sloped] node[text width=1.8cm]{na čáře a má mapu} (s_maze_following)
+            (s_maze_follow)     edge[above, sloped] node[text width=1.8cm]{na čáře a~má mapu} (s_maze_following)
             (s_maze_follow)     edge[bend right, above, sloped] node{jinak}         (s_idle)
             (s_map_start)       edge                                                (s_map_mapping)
             (s_maze_following)  edge[loop right]                                    (s_maze_following)
@@ -284,13 +284,13 @@ je možné dosáhnout pouze z CLI. Některé stavy se používají spíše jako 
 
 
 \subsection{Detekce křižovatek}
-Detekce křižovatek využívá dat ze čtyř senzorů čáry a informaci o ujeté
-vzdálenosti z enkodérů na motorech. V tabulce~\ref{tab:krizovatky} jsou
-otištěny uvažované typy křižovatek a odpovídající hodnoty výčtového datového
-typu \verb!crossroad_t! z \texttt{crossroad.h}. Detekci křižovatek provádí
+Detekce křižovatek využívá dat ze čtyř senzorů čáry a~informaci o~ujeté
+vzdálenosti z~enkodérů na motorech. V~tabulce~\ref{tab:krizovatky} jsou
+otištěny uvažované typy křižovatek a~odpovídající hodnoty výčtového datového
+typu \verb!crossroad_t! z~\texttt{crossroad.h}. Detekci křižovatek provádí
 \texttt{line\_follower.cpp}, který nabízí několik funkcí pro zjištění aktuální
 křižovatky. Úplná detekce je provedena až po přejetí křižovatky
-o \conf{cr_delay_mm} milimetrů.
+o~\conf{cr_delay_mm} milimetrů.
 
 \begin{table}[htbp]
     \centering
@@ -351,28 +351,28 @@ o \conf{cr_delay_mm} milimetrů.
 
 
 \subsection{Sledování čáry}
-Pro sledování čáry používáme P regulátor se zesílením \conf{line_Kp} a akčním
+Pro sledování čáry používáme P regulátor se zesílením \conf{line_Kp} a~akčním
 zásahem saturovaným na hodnotě \conf{line_umax}, přičemž regulační odchylku
-čteme přímo z modulu čidla čáry a akční zásah přičítáme k požadované rychlosti
-levého pásu a odčítáme od požadované rychlosti pravého pásu.
+čteme přímo z~modulu čidla čáry a~akční zásah přičítáme k~požadované rychlosti
+levého pásu a~odčítáme od požadované rychlosti pravého pásu.
 
 
 \subsection{Otáčení}
-Otáčení robota využívá zpětné vazby z gyroskopu a můžeme je spustit z CLI dvěma
-způsoby: \CLIcommand{turn <target>} a \CLIcommand{turn line <target>}.
+Otáčení robota využívá zpětné vazby z~gyroskopu a~můžeme je spustit z~CLI dvěma
+způsoby: \CLIcommand{turn <target>} a~\CLIcommand{turn line <target>}.
 
-\CLIcommand{turn} otočí robota o \texttt{<target>} stupňů, přičemž kladné
+\CLIcommand{turn} otočí robota o~\texttt{<target>} stupňů, přičemž kladné
 hodnoty otáčí doprava.
 
-\CLIcommand{turn line} funguje podobně, ale v okolí \conf{turn_line_tolerance}
+\CLIcommand{turn line} funguje podobně, ale v~okolí \conf{turn_line_tolerance}
 stupňů kolem požadované hodnoty začne robot hledat čáru (minimum regulační
 odchylky pro sledování čáry). Když je minimum nalezeno, je aktuální úhel
-z gyroskopu nastaven jako nová cílová hodnota.
+z~gyroskopu nastaven jako nová cílová hodnota.
 
-Otáčení je řízeno PID regulátorem s parametry \conf{turn_Kp}, \conf{turn_Ki},
+Otáčení je řízeno PID regulátorem s~parametry \conf{turn_Kp}, \conf{turn_Ki},
 \ldots. Bylo nutné implementovat speciální verzi regulátoru (viz
-knihovna \texttt{PID}), neboť gyroskop vrací úhel natočení kolem osy Z
-v rozsahu \numrange[range-phrase={ \text{až} }]{-180}{180}.
+knihovna \texttt{PID}), neboť gyroskop vrací úhel natočení kolem osy
+Z~v~rozsahu \numrange[range-phrase={ \text{až} }]{-180}{180}.
 
 Autonomní funkce robota používají pouze ekvivalent příkazu \CLIcommand{turn
 line}, vždy při otáčení hledají čáru.
@@ -380,9 +380,9 @@ line}, vždy při otáčení hledají čáru.
 
 \subsection{Mapování}
 Mapování probíhá metodou backtracking. Pracujeme se zásobníkem reprezentujícím
-cestu od startu k aktuální pozici robota tvořenou záznamy o typu křižovatky,
-směru průjezdu a vzdálenosti od předchozí křižovatky.
-Pomocí CLI můžeme s mapou manipulovat pomocí následujících příkazů:
+cestu od startu k~aktuální pozici robota tvořenou záznamy o~typu křižovatky,
+směru průjezdu a~vzdálenosti od předchozí křižovatky.
+Pomocí CLI můžeme s~mapou manipulovat pomocí následujících příkazů:
 \begin{lstlisting}[style=terminal,tabsize=10,columns=fixed]
 sluka:$ help
 [...]
@@ -416,12 +416,12 @@ obsahuje animaci procesu mapování vygenerovanou testem \texttt{test\_maze}.
 
 
 \subsection{Finální průjezd}
-Při finálním průjezdu se zásobník čte zdola nahoru a záznam se porovnává
-s naposledy detekovanou křižovatkou. Pokud se informace neshodují, robot přejde
-do nouzového režimu. V opačném případě robot na křižovatce odbočí podle
-instrukce v zásobníku.
+Při finálním průjezdu se zásobník čte zdola nahoru a~záznam se porovnává
+s~naposledy detekovanou křižovatkou. Pokud se informace neshodují, robot přejde
+do nouzového režimu. V~opačném případě robot na křižovatce odbočí podle
+instrukce v~zásobníku.
 
-V okolí křižovatky jede robot rychlostí \conf{base_speed}. Pokud je od
+V~okolí křižovatky jede robot rychlostí \conf{base_speed}. Pokud je od
 nejbližší křižovatky vzdálen nejméně \conf{fast_offset_mm}, nebo pokud na
 nejbližší křižovatce jel (či pojede) rovně, jede rychlostí \conf{fast_speed}.
 
@@ -429,7 +429,7 @@ nejbližší křižovatce jel (či pojede) rovně, jede rychlostí \conf{fast_sp
 \section{Závěr}
 Podařilo se vyvinou firmware, se kterým robot úspěšně vyřešil úlohu. Finální
 průjezd trval \qty{22}{\second}. Firmware obsahuje bohatou sadu nástrojů pro
-diagnostiku a ladění parametrů bez nutnosti resetu; funkce jeho
+diagnostiku a~ladění parametrů bez nutnosti resetu; funkce jeho
 nejdůležitějších částí je kontrolována automatickými testy.
 
 
