@@ -164,8 +164,8 @@
 \tableofcontents
 
 \section{Zadání}
-Cílem této práce je vytvořit firmware pro mikrokontrolér ATmega 2560 pro řízení
-robotické platformy mBot Ranger, který umožní autonomní zmapování bludiště
+Cílem této práce je vytvořit firmware pro mikrokontrolér ATmega 2560 na
+robotické platformě mBot Ranger, který umožní autonomní zmapování bludiště
 a~následný rychlý průjezd optimální trasou.
 
 \section{Řešení}
@@ -224,9 +224,9 @@ Flash: [==        ]  18.9% (used 48010 bytes from 253952 bytes)
 [...]
 \end{lstlisting}
 Příkaz \texttt{make check} provádí statickou analýzu kódu, \texttt{make test}
-spouští automatické testy (testy běží na počítači, není potřeba mít přístup
-k mikrokontroléru architektury AVR), \texttt{make upload} nahraje program do
-mikrokontroléru pomocí bootloaderu.
+spouští automatické testy (testy běží nativně na počítači, není potřeba mít
+přístup k mikrokontroléru architektury AVR), \texttt{make upload} nahraje
+program do mikrokontroléru pomocí bootloaderu.
 
 
 \subsection{CLI}
@@ -260,7 +260,7 @@ je možné dosáhnout pouze z~CLI. Některé stavy se používají spíše jako 
         \draw
             (s_emergency)       edge[above, sloped] node{pravý nárazník}            (s_maze_follow)
             (s_emergency)       edge[above, sloped] node{levý nárazník}             (s_map_start)
-            (s_maze_follow)     edge[above, sloped] node[text width=1.8cm]{na čáře a~má mapu} (s_maze_following)
+            (s_maze_follow)     edge[above, sloped] node[text width=2cm]{na čáře a~má mapu} (s_maze_following)
             (s_maze_follow)     edge[bend right, above, sloped] node{jinak}         (s_idle)
             (s_map_start)       edge                                                (s_map_mapping)
             (s_maze_following)  edge[loop right]                                    (s_maze_following)
@@ -276,6 +276,9 @@ je možné dosáhnout pouze z~CLI. Některé stavy se používají spíše jako 
             (s_line_following)  edge[above, sloped, bend right] node{křižovatka}    (s_stop)
             (s_idle)            edge[above, sloped] node{pravý nárazník}            (s_maze_follow)
             (s_idle)            edge[above, sloped] node{levý nárazník}             (s_map_start)
+            (s_idle)            edge[loop below]                                    (s_idle)
+            (s_finish)          edge[loop below]                                    (s_finish)
+            (s_emergency)       edge[loop right]                                    (s_emergency)
             ;
     \end{tikzpicture}
     \caption{Stavový diagram hlavního stavového automatu}
@@ -353,7 +356,7 @@ o~\conf{cr_delay_mm} milimetrů.
 \subsection{Sledování čáry}
 Pro sledování čáry používáme P regulátor se zesílením \conf{line_Kp} a~akčním
 zásahem saturovaným na hodnotě \conf{line_umax}, přičemž regulační odchylku
-čteme přímo z~modulu čidla čáry a~akční zásah přičítáme k~požadované rychlosti
+čteme přímo z~modulu čidla čáry, akční zásah přičítáme k~požadované rychlosti
 levého pásu a~odčítáme od požadované rychlosti pravého pásu.
 
 
@@ -373,9 +376,11 @@ Otáčení je řízeno PID regulátorem s~parametry \conf{turn_Kp}, \conf{turn_K
 \ldots. Bylo nutné implementovat speciální verzi regulátoru (viz
 knihovna \texttt{PID}), neboť gyroskop vrací úhel natočení kolem osy
 Z~v~rozsahu \numrange[range-phrase={ \text{až} }]{-180}{180}.
+Pokud je regulační odchylka i~akční zásah v~absolutní hodnotě menší než
+nastavené prahové hodnoty, je otáčení ukončeno.
 
 Autonomní funkce robota používají pouze ekvivalent příkazu \CLIcommand{turn
-line}, vždy při otáčení hledají čáru.
+line}, při otáčení vždy hledají čáru.
 
 
 \subsection{Mapování}
@@ -409,17 +414,19 @@ maze_push F	I	319
 
 sluka:$
 \end{lstlisting}
+(Výše vypsaná cesta je finální cesta do cíle získaná procesem mapování.)
 
-Soubor \texttt{test/test\_maze/maze\_map.gif}\footnote{nepodařilo se nám vložit
-animovaný GIF do PDF souboru tak, aby jej úspěšně zobrazily všechny prohlížeče}
-obsahuje animaci procesu mapování vygenerovanou testem \texttt{test\_maze}.
+Soubor \texttt{test/test\_maze/maze\_map.gif}\footnote{Nepodařilo se nám vložit
+animovaný GIF do PDF souboru tak, aby jej úspěšně zobrazily všechny
+prohlížeče.} obsahuje animaci procesu mapování vygenerovanou testem
+\texttt{test\_maze}.
 
 
 \subsection{Finální průjezd}
-Při finálním průjezdu se zásobník čte zdola nahoru a~záznam se porovnává
-s~naposledy detekovanou křižovatkou. Pokud se informace neshodují, robot přejde
-do nouzového režimu. V~opačném případě robot na křižovatce odbočí podle
-instrukce v~zásobníku.
+Při finálním průjezdu se obsah zásobníku čte zdola nahoru a~záznam se porovnává
+s~naposledy detekovanou křižovatkou. Pokud se informace neshodují, robot
+zastaví a~přejde do nouzového režimu. V~opačném případě robot na křižovatce
+odbočí podle instrukce v~zásobníku.
 
 V~okolí křižovatky jede robot rychlostí \conf{base_speed}. Pokud je od
 nejbližší křižovatky vzdálen nejméně \conf{fast_offset_mm}, nebo pokud na
