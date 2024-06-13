@@ -1,6 +1,8 @@
 % Tento soubor je soucasti vyukovych materialu
 % KKY/LS2, autor M. Goubej.
 % Upraveno.
+% Na tento soubor se NEVZTAHUJE MIT Licence, pod kterou je distribuiován zbytek
+% tohoto repozitáře.
 clear;
 close all;
 

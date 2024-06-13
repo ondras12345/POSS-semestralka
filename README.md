@@ -1,4 +1,11 @@
-# POSS semestralka - tank
+# Semestrální práce KKY/POSS
+Tento repositář obsahuje zdrojové kódy firmware pro "tank" mBot ranger, který
+řeší úlohu průjezdu bludištěm tvořeným černou lepicí páskou nalepenou na
+podlaze. Více informací lze najít v dokumentaci (LaTeX zdrojové kódy ve složce
+`doc/`, zkompilované PDF viz
+[Releases](https://github.com/ondras12345/POSS-semestralka/releases)).
+
+
 ## Notes
 O neco mirnejsi manevry
 ```
